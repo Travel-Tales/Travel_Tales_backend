@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { TravelBoard, UserBoard } from './entities';
+import { User, UserBoard, TravelBoard } from './entities';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +19,9 @@ import { TravelBoard, UserBoard } from './entities';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        GOOGLE_CLIENT_ID: Joi.string().required(),
+        GOOGLE_SECRET_KEY: Joi.string().required(),
+        SERVER_URI: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -38,6 +41,7 @@ import { TravelBoard, UserBoard } from './entities';
         },
       },
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
