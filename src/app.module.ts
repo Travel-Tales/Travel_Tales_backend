@@ -6,6 +6,8 @@ import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User, UserBoard, TravelBoard } from './entities';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from './jwt/jwt.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { AuthModule } from './auth/auth.module';
       },
     }),
     AuthModule,
+    JwtModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
