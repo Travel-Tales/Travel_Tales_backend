@@ -7,7 +7,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   constructor() {
     super({
       clientID: process.env.KAKAO_CLIENT_ID, // 클라이언트 ID
-      callbackURL: `${process.env.SERVER_URI}/api/auth/kakao/callback`, // 콜백 URL
+      callbackURL: `${process.env.SERVER_URL}/api/auth/kakao/callback`, // 콜백 URL
     });
   }
 

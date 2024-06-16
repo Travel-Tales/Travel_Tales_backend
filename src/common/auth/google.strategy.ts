@@ -8,8 +8,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID, // 클라이언트 ID
       clientSecret: process.env.GOOGLE_SECRET_KEY, // 시크릿
-      callbackURL: `${process.env.SERVER_URI}/api/auth/google/callback`, // 콜백 URL
-      scope: ['email', 'profile'], // scope
+      callbackURL: `${process.env.SERVER_URL}/api/auth/google/callback`, // 콜백 URL
+      scope: ['email', 'profile'],
+      prompt: 'none',
     });
   }
 
