@@ -21,7 +21,7 @@ export class User extends CoreEntity {
   @IsString()
   loginType: UserLoginType;
 
-  @Column()
+  @Column({ default: '' })
   @IsString()
   imageUrl: string;
 }
