@@ -3,7 +3,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 
 @Entity()
-export class TravelBoard extends CoreEntity {
+export class TravelPost extends CoreEntity {
   @Column()
   @IsString()
   title: string;

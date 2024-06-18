@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User, UserBoard, TravelBoard } from './entities';
+import { User, UserPost, TravelPost } from './entities';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
@@ -41,7 +41,7 @@ import { UserModule } from './user/user.module';
       database: process.env.DB_NAME,
       logging: process.env.NODE_ENV === 'dev' ? true : false,
       synchronize: process.env.NODE_ENV === 'dev' ? true : false,
-      entities: [User, UserBoard, TravelBoard],
+      entities: [User, UserPost, TravelPost],
       extra: {
         connectionTimeoutMillis: 10000,
         postgres: {
