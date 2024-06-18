@@ -19,7 +19,10 @@ export class JwtService {
     });
   }
 
-  verifyAccessToken(token: string) {}
+  verifyAccessToken(token: string): IPayload {
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET_KEY);
+    return this.createPayload(decoded);
+  }
 
   private createPayload(userInfo: User): IPayload {
     return {
