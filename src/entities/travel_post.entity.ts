@@ -2,8 +2,13 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 
+export enum ViewType {
+  Public = 'Public',
+  Private = 'Private',
+}
+
 @Entity()
-export class TravelBoard extends CoreEntity {
+export class TravelPost extends CoreEntity {
   @Column()
   @IsString()
   title: string;
@@ -36,7 +41,7 @@ export class TravelBoard extends CoreEntity {
   @IsDate()
   endDate: Date;
 
-  @Column()
+  @Column({ default: ViewType.Public })
   @IsBoolean()
-  isPublic: boolean;
+  viewType: ViewType;
 }

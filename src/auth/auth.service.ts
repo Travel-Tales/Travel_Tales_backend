@@ -22,9 +22,7 @@ export class AuthService {
       );
     }
 
-    const paylaod = this.createPayload(userInfo);
-
-    return this.jwtService.createRefreshToken(paylaod);
+    return this.jwtService.createRefreshToken(userInfo);
   }
 
   async loginKakao(user: Profile, loginType: UserLoginType): Promise<string> {
@@ -39,17 +37,6 @@ export class AuthService {
       );
     }
 
-    const paylaod = this.createPayload(userInfo);
-
-    return this.jwtService.createRefreshToken(paylaod);
-  }
-
-  private createPayload(userInfo: User): IPayload {
-    return {
-      id: userInfo.id,
-      nickname: userInfo.nickname,
-      email: userInfo.email,
-      loginType: userInfo.loginType,
-    };
+    return this.jwtService.createRefreshToken(userInfo);
   }
 }

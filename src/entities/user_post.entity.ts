@@ -3,7 +3,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { IsNumber } from 'class-validator';
 
 @Entity()
-export class UserBoard extends CoreEntity {
+export class UserPost extends CoreEntity {
   @Column()
   @IsNumber()
   user_id: number;
