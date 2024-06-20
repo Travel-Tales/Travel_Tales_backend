@@ -1,4 +1,3 @@
-// src/common/exception/error-code/error.code.ts
 class ErrorCodeVo {
   readonly status;
   readonly message;
