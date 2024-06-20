@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
 import { JwtMiddleware } from './common/middlewares/jwt.middleware';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { JwtMiddleware } from './common/middlewares/jwt.middleware';
     AuthModule,
     JwtModule,
     UserModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],
