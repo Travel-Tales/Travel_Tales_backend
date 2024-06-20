@@ -2,7 +2,7 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 
-export enum ViewType {
+export enum VisibilityStatus {
   Public = 'Public',
   Private = 'Private',
 }
@@ -41,7 +41,7 @@ export class TravelPost extends CoreEntity {
   @IsDate()
   endDate: Date;
 
-  @Column({ default: ViewType.Public })
+  @Column({ default: VisibilityStatus.Public })
   @IsBoolean()
-  viewType: ViewType;
+  visibilityStatus: VisibilityStatus;
 }
