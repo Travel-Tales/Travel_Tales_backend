@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 import { CoreOutput } from 'src/common/dtos/core.output';
-import { TravelPost, ViewType } from 'src/entities';
+import { TravelPost, VisibilityStatus } from 'src/entities';
 
 export class CreateInput {
   @IsString()
@@ -30,8 +30,8 @@ export class CreateInput {
   @IsDate()
   endDate: Date;
 
-  @IsEnum(ViewType)
-  viewType: ViewType;
+  @IsEnum(VisibilityStatus)
+  visibilityStatus: VisibilityStatus;
 }
 
 export class CreateOutPut extends TravelPost {}
