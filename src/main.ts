@@ -12,7 +12,7 @@ async function bootstrap() {
 
   const corsOptions: CorsOptions = {
     origin: '*',
-    methods: 'GET,POST,PUT',
+    methods: 'GET,POST,PUT,PATCH',
     allowedHeaders: 'Origin,Content-Type,Authorization,Accept',
     credentials: true,
     maxAge: 81600,
@@ -20,13 +20,13 @@ async function bootstrap() {
   app.enableCors(corsOptions);
 
   const config = new DocumentBuilder()
-    .setTitle('Similarity API')
-    .setDescription('The Similarity API description')
+    .setTitle('Travel Tales API')
+    .setDescription('The Travel Tales API description')
     .setVersion('1.0')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api-docs', app, document);
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes(
