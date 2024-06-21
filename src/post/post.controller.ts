@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Patch, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { IdParamDto } from './dtos/pathvariable.dto';
 import { UpdateInputDto } from './dtos/update.dto';
@@ -10,6 +18,8 @@ import {
   ApiBody,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { Role } from 'src/common/decorators/role.decorator';
+import { RoleGuard } from 'src/common/guards/role.guard';
 
 @Controller('post')
 @ApiTags('Post')
@@ -21,6 +31,8 @@ export class PostController {
     description: '게시물 생성',
   })
   @ApiBearerAuth('Authorization')
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
   @Post()
   async createPost(
     @Req() req,
@@ -36,6 +48,8 @@ export class PostController {
   })
   @ApiBearerAuth('Authorization')
   @ApiParam({ name: 'id', type: Number })
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
   @Patch(':id')
   @ApiBody({ type: UpdateInputDto })
   async updatePost(
