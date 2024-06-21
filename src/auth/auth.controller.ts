@@ -2,13 +2,17 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { UserLoginType } from 'src/entities';
-import { ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({
+    summary: '구글 로그인 API',
+    description: '구글 로그인',
+  })
   @UseGuards(AuthGuard('google'))
   @Get('google')
   async googleAuth(): Promise<void> {}
@@ -29,6 +33,10 @@ export class AuthController {
     return res.status(200).redirect(process.env.REDIRECT_URL);
   }
 
+  @ApiOperation({
+    summary: '카카오 로그인 API',
+    description: '카카오 로그인',
+  })
   @UseGuards(AuthGuard('kakao'))
   @Get('kakao')
   async kakaoAuth(): Promise<void> {}
