@@ -1,6 +1,5 @@
-import { PartialType, PickType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/swagger';
 import { CreateInputDto } from './create.dto';
-
 export class UpdateInputDto extends PickType(PartialType(CreateInputDto), [
   'title',
   'content',

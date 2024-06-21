@@ -3,13 +3,17 @@ import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { IdParamDto } from './dtos/pathvariable.dto';
 import { UpdateInputDto } from './dtos/update.dto';
 import { PostService } from './post.service';
-import { ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @Controller('post')
 @ApiTags('Post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  @ApiOperation({
+    summary: '게시물 생성 API',
+    description: '게시물 생성',
+  })
   @Post()
   async createPost(
     @Body() createInputDto: CreateInputDto,
@@ -18,10 +22,16 @@ export class PostController {
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id', type: Number })
+  @ApiOperation({
+    summary: '게시물 수정 API',
+    description: '게시물 수정',
+  })
+  @ApiBody({ type: UpdateInputDto })
   async updatePost(
-    @Param() params: IdParamDto,
+    @Param('id') id: number,
     @Body() updateInputDto: UpdateInputDto,
   ): Promise<void> {
-    await this.postService.updatePost(params.id, updateInputDto);
+    await this.postService.updatePost(id, updateInputDto);
   }
 }
