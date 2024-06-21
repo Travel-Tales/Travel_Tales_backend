@@ -1,7 +1,8 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { UserLoginType } from 'src/entities';
+import { ITokens } from 'src/jwt/interfaces';
 import { ApiTags, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 
 @Controller('auth')
@@ -21,12 +22,12 @@ export class AuthController {
   @Get('google/callback')
   @ApiExcludeEndpoint()
   async googleAuthCallback(@Req() req, @Res() res) {
-    const refreshToken = await this.authService.loginGoogle(
+    const { refresh } = await this.authService.loginGoogle(
       req.user,
       UserLoginType.Google,
     );
 
-    res.cookie('refresh', refreshToken, {
+    res.cookie('refresh', refresh, {
       httpOnly: true,
     });
 
@@ -45,15 +46,32 @@ export class AuthController {
   @Get('kakao/callback')
   @ApiExcludeEndpoint()
   async kakaoAuthCallback(@Req() req, @Res() res) {
-    const refreshToken = await this.authService.loginKakao(
+    const refresh = await this.authService.loginKakao(
       req.user,
       UserLoginType.Kakao,
     );
 
-    res.cookie('refresh', refreshToken, {
+    res.cookie('refresh', refresh, {
       httpOnly: true,
     });
 
     return res.status(200).redirect(process.env.REDIRECT_URL);
+  }
+
+  @Post('refresh')
+  @UseGuards(AuthGuard('refresh'))
+  async updateAccessToken(
+    @Req() req,
+    @Res({ passthrough: true }) res,
+  ): Promise<ITokens> {
+    const { refresh, access } = await this.authService.updateAccessToken(
+      req.user,
+    );
+
+    res.cookie('refresh', refresh, {
+      httpOnly: true,
+    });
+
+    return { access };
   }
 }
