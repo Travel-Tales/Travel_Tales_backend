@@ -19,8 +19,8 @@ async function bootstrap() {
       forbidNonWhitelisted: false, // 정의되지 않은 프로퍼티가 존재할 경우 에러 발생
     }),
   );
-  app.useGlobalInterceptors(new APIInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new APIInterceptor());
   await app.listen(PORT);
 }
 bootstrap();

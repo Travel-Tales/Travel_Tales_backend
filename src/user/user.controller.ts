@@ -12,6 +12,6 @@ export class UserController {
   @UseGuards(RoleGuard)
   @Get('/profile')
   async getMyProfile(@Req() req): Promise<User> {
-    return this.userService.getUserInfoByEmail(req.user);
+    return this.userService.getUserInfoByEmail(req.user.email);
   }
 }
