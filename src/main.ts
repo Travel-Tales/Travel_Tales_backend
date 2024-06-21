@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as cookieParser from 'cookie-parser';
 import { HttpExceptionFilter } from './common/exceptions/exception.filter';
 import { APIInterceptor } from './common/interceptors/api.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -28,7 +29,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
   app.setGlobalPrefix('api');
-
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -36,8 +37,8 @@ async function bootstrap() {
       forbidNonWhitelisted: false, // 정의되지 않은 프로퍼티가 존재할 경우 에러 발생
     }),
   );
-  app.useGlobalInterceptors(new APIInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new APIInterceptor());
   await app.listen(PORT);
 }
 bootstrap();

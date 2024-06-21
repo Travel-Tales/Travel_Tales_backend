@@ -14,12 +14,6 @@ export class APIInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<any> | Observable<any> {
-    const request = context.switchToHttp().getRequest();
-    const path = request.originalUrl;
-    const logger = new Logger();
-
-    logger.log(`${path}`);
-
     return next.handle().pipe(
       map(
         (data): CoreOutput<any> => ({
