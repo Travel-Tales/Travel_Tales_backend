@@ -5,10 +5,11 @@ import { GoogleStrategy } from 'src/common/strategies/google.strategy';
 import { KakaoStrategy } from 'src/common/strategies/kakao.strategy';
 import { JwtModule } from 'src/jwt/jwt.module';
 import { UserModule } from 'src/user/user.module';
+import { RefreshTokenStrategy } from 'src/common/strategies/jwt.strategy';
 
 @Module({
   imports: [JwtModule, UserModule],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, KakaoStrategy],
+  providers: [AuthService, GoogleStrategy, KakaoStrategy, RefreshTokenStrategy],
 })
 export class AuthModule {}
