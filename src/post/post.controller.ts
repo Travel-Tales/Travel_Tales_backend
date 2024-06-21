@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Param, Patch, Post, Req } from '@nestjs/common';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { IdParamDto } from './dtos/pathvariable.dto';
 import { UpdateInputDto } from './dtos/update.dto';
@@ -20,11 +20,13 @@ export class PostController {
     summary: '게시물 생성 API',
     description: '게시물 생성',
   })
-  @ApiBearerAuth()
+  @ApiBearerAuth('Authorization')
   @Post()
   async createPost(
+    @Req() req,
     @Body() createInputDto: CreateInputDto,
   ): Promise<CreateOutPutDto> {
+    console.log(req.user);
     return this.postService.createPost(createInputDto);
   }
 
@@ -32,7 +34,7 @@ export class PostController {
     summary: '게시물 수정 API',
     description: '게시물 수정',
   })
-  @ApiBearerAuth()
+  @ApiBearerAuth('Authorization')
   @ApiParam({ name: 'id', type: Number })
   @Patch(':id')
   @ApiBody({ type: UpdateInputDto })

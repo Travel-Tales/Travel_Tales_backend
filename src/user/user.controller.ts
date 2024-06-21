@@ -16,7 +16,7 @@ export class UserController {
   })
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth('Authorization')
   @Get('/profile')
   async getMyProfile(@Req() req): Promise<User> {
     return this.userService.getUserInfoByEmail(req.user.email);
