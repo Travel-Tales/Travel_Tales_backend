@@ -3,8 +3,10 @@ import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { IdParamDto } from './dtos/pathvariable.dto';
 import { UpdateInputDto } from './dtos/update.dto';
 import { PostService } from './post.service';
+import { ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 
 @Controller('post')
+@ApiTags('Post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
