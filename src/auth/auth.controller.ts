@@ -58,6 +58,10 @@ export class AuthController {
     return res.status(200).redirect(process.env.REDIRECT_URL);
   }
 
+  @ApiOperation({
+    summary: '엑세스 토큰 재발급 API',
+    description: '엑세스 토큰 재발급',
+  })
   @Post('refresh')
   @UseGuards(AuthGuard('refresh'))
   async updateAccessToken(

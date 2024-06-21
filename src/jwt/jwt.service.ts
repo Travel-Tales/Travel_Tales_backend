@@ -38,7 +38,7 @@ export class JwtService {
     };
   }
 
-  private thorwException(e: Error) {
+  private thorwException(e: Error): void {
     switch (e.message) {
       case 'jwt expired':
         throw ExpiredTokenException('Expired token');
