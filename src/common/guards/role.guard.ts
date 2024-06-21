@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AllowedRoles } from '../decorators/role.decorator';
+import { ForbiddenException } from '../exceptions/service.exception';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -20,7 +21,7 @@ export class RoleGuard implements CanActivate {
     const { user } = request;
 
     if (!user) {
-      return false;
+      throw ForbiddenException();
     }
 
     return roles.includes(user.loginType);
