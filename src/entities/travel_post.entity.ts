@@ -13,7 +13,7 @@ export class TravelPost extends CoreEntity {
   @IsString()
   title: string;
 
-  @Column({ unique: true })
+  @Column()
   @IsString()
   content: string;
 
