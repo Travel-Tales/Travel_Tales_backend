@@ -15,6 +15,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
 import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import { PostModule } from './post/post.module';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { PostModule } from './post/post.module';
     JwtModule,
     UserModule,
     PostModule,
+    GatewayModule,
   ],
   controllers: [AppController],
   providers: [AppService],
