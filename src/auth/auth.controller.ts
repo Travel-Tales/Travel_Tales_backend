@@ -2,8 +2,10 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { UserLoginType } from 'src/entities';
+import { ApiTags, ApiExcludeEndpoint } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -13,6 +15,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('google'))
   @Get('google/callback')
+  @ApiExcludeEndpoint()
   async googleAuthCallback(@Req() req, @Res() res) {
     const refreshToken = await this.authService.loginGoogle(
       req.user,
@@ -32,6 +35,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard('kakao'))
   @Get('kakao/callback')
+  @ApiExcludeEndpoint()
   async kakaoAuthCallback(@Req() req, @Res() res) {
     const refreshToken = await this.authService.loginKakao(
       req.user,
