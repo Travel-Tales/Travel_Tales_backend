@@ -1,14 +1,15 @@
-import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
-import { IsNumber } from 'class-validator';
+import { Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from './user.entity';
+import { TravelPost } from './travel_post.entity';
 
 @Entity()
-export class UserPost extends CoreEntity {
-  @Column()
-  @IsNumber()
-  user_id: number;
+export class UserPost {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column()
-  @IsNumber()
-  board_id: number;
+  @ManyToOne(() => User, (user) => user.post)
+  user: User;
+
+  @ManyToOne(() => TravelPost, (post) => post.user)
+  post: TravelPost;
 }
