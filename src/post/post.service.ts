@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TravelPost } from 'src/entities';
+import { TravelPost, UserPost } from 'src/entities';
 import { Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdateInputDto } from './dtos/update.dto';
@@ -11,12 +11,23 @@ export class PostService {
   constructor(
     @InjectRepository(TravelPost)
     private readonly travelPostRepository: Repository<TravelPost>,
+    @InjectRepository(UserPost)
+    private readonly userPostRepository: Repository<UserPost>,
   ) {}
 
-  async createPost(createInputDto: CreateInputDto): Promise<CreateOutPutDto> {
-    return this.travelPostRepository.save(
+  async createPost(
+    user,
+    createInputDto: CreateInputDto,
+  ): Promise<CreateOutPutDto> {
+    const post = await this.travelPostRepository.save(
       this.travelPostRepository.create(createInputDto),
     );
+
+    await this.userPostRepository.save(
+      this.userPostRepository.create({ post, user }),
+    );
+
+    return post;
   }
 
   async updatePost(id: number, updateInputDto: UpdateInputDto) {
