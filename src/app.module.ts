@@ -13,7 +13,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
 import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import { PostModule } from './post/post.module';
-import { GatewayModule } from './gateway/gateway.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -60,7 +60,7 @@ import { GatewayModule } from './gateway/gateway.module';
     JwtModule,
     UserModule,
     PostModule,
-    GatewayModule,
+    EventModule,
   ],
   controllers: [],
   providers: [],
