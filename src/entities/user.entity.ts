@@ -26,7 +26,7 @@ export class User extends CoreEntity {
   @IsString()
   imageUrl: string;
 
-  @ManyToMany(() => TravelPost, (travelpost) => travelpost.id)
+  @ManyToMany(() => TravelPost, (travelpost) => travelpost.user)
   @JoinTable() // 중간 테이블 명시
   post: TravelPost[];
 }
