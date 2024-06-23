@@ -4,11 +4,9 @@ import {
   Param,
   Patch,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
-import { IdParamDto } from './dtos/pathvariable.dto';
 import { UpdateInputDto } from './dtos/update.dto';
 import { PostService } from './post.service';
 import {
@@ -20,6 +18,8 @@ import {
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
+import { User } from 'src/common/decorators/user.decorator';
+import { IPayload } from 'src/jwt/interfaces';
 
 @Controller('post')
 @ApiTags('Post')
@@ -35,11 +35,10 @@ export class PostController {
   @UseGuards(RoleGuard)
   @Post()
   async createPost(
-    @Req() req,
+    @User() user: IPayload,
     @Body() createInputDto: CreateInputDto,
   ): Promise<CreateOutPutDto> {
-    console.log(req.user);
-    return this.postService.createPost(createInputDto);
+    return this.postService.createPost(user, createInputDto);
   }
 
   @ApiOperation({
@@ -53,6 +52,7 @@ export class PostController {
   @Patch(':id')
   @ApiBody({ type: UpdateInputDto })
   async updatePost(
+    @User() user: IPayload,
     @Param('id') id: number,
     @Body() updateInputDto: UpdateInputDto,
   ): Promise<void> {
