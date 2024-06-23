@@ -46,6 +46,6 @@ export class TravelPost extends CoreEntity {
   @IsBoolean()
   visibilityStatus: VisibilityStatus;
 
-  @ManyToMany(() => User, (user) => user.id)
+  @ManyToMany(() => User, (user) => user.post)
   user: User[];
 }
