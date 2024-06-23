@@ -13,6 +13,7 @@ export class JwtMiddleware implements NestMiddleware {
       const token = req.headers.authorization.split(' ')[1];
 
       const user = this.jwtService.verifyAccessToken(token);
+
       if (typeof user === 'object' && user.hasOwnProperty('id')) {
         req['user'] = user;
       }

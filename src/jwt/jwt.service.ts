@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IPayload } from './interfaces';
 import * as jwt from 'jsonwebtoken';
 import { User } from 'src/entities';
+import { ExpiredTokenException } from 'src/common/exceptions/service.exception';
 
 @Injectable()
 export class JwtService {
@@ -20,8 +21,12 @@ export class JwtService {
   }
 
   verifyAccessToken(token: string): IPayload {
-    const decoded = jwt.verify(token, process.env.ACCESS_SECRET_KEY);
-    return this.createPayload(decoded);
+    try {
+      const decoded = jwt.verify(token, process.env.ACCESS_SECRET_KEY);
+      return this.createPayload(decoded);
+    } catch (e) {
+      this.thorwException(e);
+    }
   }
 
   private createPayload(userInfo: User): IPayload {
@@ -31,5 +36,18 @@ export class JwtService {
       email: userInfo.email,
       loginType: userInfo.loginType,
     };
+  }
+
+  private thorwException(e: Error) {
+    switch (e.message) {
+      case 'jwt expired':
+        throw ExpiredTokenException('Expired token');
+
+      case 'jwt malformed':
+        throw ExpiredTokenException('Malformed token');
+
+      default:
+        throw ExpiredTokenException('Invalid signature');
+    }
   }
 }

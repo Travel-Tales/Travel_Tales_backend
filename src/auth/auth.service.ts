@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Profile } from 'passport-google-oauth20';
 import { User, UserLoginType } from 'src/entities';
-import { IPayload } from 'src/jwt/interfaces';
+import { IPayload, ITokens } from 'src/jwt/interfaces';
 import { JwtService } from 'src/jwt/jwt.service';
 import { UserService } from 'src/user/user.service';
 
@@ -12,7 +12,7 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async loginGoogle(user: Profile, loginType: UserLoginType): Promise<string> {
+  async loginGoogle(user: Profile, loginType: UserLoginType): Promise<ITokens> {
     let userInfo = await this.userService.getUserInfoByEmail(user._json.email);
 
     if (!userInfo) {
@@ -22,10 +22,12 @@ export class AuthService {
       );
     }
 
-    return this.jwtService.createRefreshToken(userInfo);
+    const refresh = this.jwtService.createRefreshToken(userInfo);
+
+    return { refresh };
   }
 
-  async loginKakao(user: Profile, loginType: UserLoginType): Promise<string> {
+  async loginKakao(user: Profile, loginType: UserLoginType): Promise<ITokens> {
     let userInfo = await this.userService.getUserInfoByEmail(
       user._json.kakao_account.email,
     );
@@ -37,6 +39,17 @@ export class AuthService {
       );
     }
 
-    return this.jwtService.createRefreshToken(userInfo);
+    const refresh = this.jwtService.createRefreshToken(userInfo);
+
+    return { refresh };
+  }
+
+  async updateAccessToken(user: IPayload): Promise<ITokens> {
+    let userInfo = await this.userService.getUserInfoByEmail(user.email);
+
+    const refresh = this.jwtService.createRefreshToken(userInfo);
+    const access = this.jwtService.createAccessToken(userInfo);
+
+    return { refresh, access };
   }
 }
