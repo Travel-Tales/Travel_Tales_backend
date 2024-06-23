@@ -50,6 +50,7 @@ import { GatewayModule } from './gateway/gateway.module';
       entities: [User, UserPost, TravelPost],
       extra: {
         connectionTimeoutMillis: 10000,
+        // ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
         postgres: {
           extensions: ['pgvector'],
         },
