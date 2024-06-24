@@ -1,33 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TravelPost, UserPost } from 'src/entities';
+import { TravelPost, UserTravelPost, VisibilityStatus } from 'src/entities';
 import { Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdateInputDto } from './dtos/update.dto';
 import { NotFoundException } from 'src/common/exceptions/service.exception';
+import { IPayload } from 'src/jwt/interfaces';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(TravelPost)
     private readonly travelPostRepository: Repository<TravelPost>,
-    @InjectRepository(UserPost)
-    private readonly userPostRepository: Repository<UserPost>,
+    @InjectRepository(UserTravelPost)
+    private readonly userTravelPostRepository: Repository<UserTravelPost>,
   ) {}
+
+  async getPost(user: IPayload): Promise<TravelPost[]> {
+    return this.travelPostRepository.find({
+      where: { visibilityStatus: VisibilityStatus.Public },
+      relations: ['userTravelPost'],
+    });
+  }
 
   async createPost(
     user,
     createInputDto: CreateInputDto,
   ): Promise<CreateOutPutDto> {
-    const post = await this.travelPostRepository.save(
+    const travelPost = await this.travelPostRepository.save(
       this.travelPostRepository.create(createInputDto),
     );
 
-    await this.userPostRepository.save(
-      this.userPostRepository.create({ post, user }),
+    await this.userTravelPostRepository.save(
+      this.userTravelPostRepository.create({ travelPost, user }),
     );
 
-    return post;
+    return travelPost;
   }
 
   async updatePost(id: number, updateInputDto: UpdateInputDto) {
