@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { UserLoginType } from 'src/entities';
 import { ITokens } from 'src/jwt/interfaces';
 import { ApiTags, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
+import { User } from 'src/common/decorators/user.decorator';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -58,15 +59,17 @@ export class AuthController {
     return res.status(200).redirect(process.env.REDIRECT_URL);
   }
 
+  @ApiOperation({
+    summary: '엑세스 토큰 재발급 API',
+    description: '엑세스 토큰 재발급',
+  })
   @Post('refresh')
   @UseGuards(AuthGuard('refresh'))
   async updateAccessToken(
-    @Req() req,
+    @User() user,
     @Res({ passthrough: true }) res,
   ): Promise<ITokens> {
-    const { refresh, access } = await this.authService.updateAccessToken(
-      req.user,
-    );
+    const { refresh, access } = await this.authService.updateAccessToken(user);
 
     res.cookie('refresh', refresh, {
       httpOnly: true,
