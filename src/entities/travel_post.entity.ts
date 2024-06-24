@@ -1,7 +1,7 @@
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
-import { User } from './user.entity';
+import { UserTravelPost } from './user_travel_post.entity';
 
 export enum VisibilityStatus {
   Public = 'Public',
@@ -46,6 +46,9 @@ export class TravelPost extends CoreEntity {
   @IsBoolean()
   visibilityStatus: VisibilityStatus;
 
-  @ManyToMany(() => User, (user) => user.post)
-  user: User[];
+  @OneToMany(
+    () => UserTravelPost,
+    (userTravelPost) => userTravelPost.travelPost,
+  )
+  userTravelPost: UserTravelPost[];
 }
