@@ -7,7 +7,7 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User, UserPost, TravelPost } from './entities';
+import { User, UserTravelPost, TravelPost } from './entities';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
@@ -47,7 +47,7 @@ import { EventModule } from './event/event.module';
       database: process.env.DB_NAME,
       logging: process.env.NODE_ENV === 'dev' ? true : false,
       synchronize: process.env.NODE_ENV === 'dev' ? true : false,
-      entities: [User, UserPost, TravelPost],
+      entities: [User, UserTravelPost, TravelPost],
       extra: {
         connectionTimeoutMillis: 10000,
         // ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
