@@ -13,6 +13,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
 import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import { PostModule } from './post/post.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { PostModule } from './post/post.module';
       entities: [User, UserPost, TravelPost],
       extra: {
         connectionTimeoutMillis: 10000,
+        // ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
         postgres: {
           extensions: ['pgvector'],
         },
@@ -58,6 +60,7 @@ import { PostModule } from './post/post.module';
     JwtModule,
     UserModule,
     PostModule,
+    EventModule,
   ],
   controllers: [],
   providers: [],

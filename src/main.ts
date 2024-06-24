@@ -12,7 +12,7 @@ async function bootstrap() {
   const PORT = process.env.PORT || 9502;
 
   const corsOptions: CorsOptions = {
-    origin: '*',
+    origin: ['http://localhost:3000', 'http://localhost:3001'],
     methods: 'GET,POST,PUT,PATCH',
     allowedHeaders: 'Origin,Content-Type,Authorization,Accept',
     credentials: true,
@@ -20,7 +20,13 @@ async function bootstrap() {
   };
   app.enableCors(corsOptions);
 
+  app.setGlobalPrefix('api');
+
   const config = new DocumentBuilder()
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'Token' },
+      'Authorization',
+    )
     .setTitle('Travel Tales API')
     .setDescription('The Travel Tales API description')
     .setVersion('1.0')
@@ -28,7 +34,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document);
-  app.setGlobalPrefix('api');
   app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
