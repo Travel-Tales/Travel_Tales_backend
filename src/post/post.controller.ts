@@ -29,10 +29,9 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @ApiOperation({
-    summary: '게시물 생성 API',
-    description: '게시물 생성',
+    summary: '게시물 가져오기',
+    description: '게시물 가져오기',
   })
-  @ApiBearerAuth('Authorization')
   @Role(['Any'])
   @UseGuards(RoleGuard)
   @Get()
