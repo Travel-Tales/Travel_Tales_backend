@@ -6,6 +6,7 @@ import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdateInputDto } from './dtos/update.dto';
 import { NotFoundException } from 'src/common/exceptions/service.exception';
 import { IPayload } from 'src/jwt/interfaces';
+import { EventGateway } from 'src/event/event.gateway';
 
 @Injectable()
 export class PostService {
@@ -14,7 +15,12 @@ export class PostService {
     private readonly travelPostRepository: Repository<TravelPost>,
     @InjectRepository(UserTravelPost)
     private readonly userTravelPostRepository: Repository<UserTravelPost>,
+    private readonly eventGateway: EventGateway,
   ) {}
+
+  async getPostById(postId: number): Promise<TravelPost> {
+    return this.travelPostRepository.findOne({ where: { id: postId } });
+  }
 
   async getPost(user: IPayload): Promise<TravelPost[]> {
     return this.travelPostRepository.find({
@@ -27,7 +33,7 @@ export class PostService {
     user,
     createInputDto: CreateInputDto,
   ): Promise<CreateOutPutDto> {
-    const travelPost = await this.travelPostRepository.save(
+    const travelPost: TravelPost = await this.travelPostRepository.save(
       this.travelPostRepository.create(createInputDto),
     );
 
@@ -39,7 +45,9 @@ export class PostService {
   }
 
   async updatePost(id: number, updateInputDto: UpdateInputDto) {
-    const post = await this.travelPostRepository.findOne({ where: { id } });
+    const post: TravelPost = await this.travelPostRepository.findOne({
+      where: { id },
+    });
 
     if (!post) {
       throw NotFoundException('Not found post');
@@ -51,5 +59,7 @@ export class PostService {
         ...updateInputDto,
       },
     ]);
+
+    this.eventGateway.notifyPostUpdate(String(id), post);
   }
 }
