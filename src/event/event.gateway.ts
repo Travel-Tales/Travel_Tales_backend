@@ -5,26 +5,48 @@ import {
   OnGatewayInit,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  WebSocketServer,
   MessageBody,
   ConnectedSocket,
+  WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
+import { ForbiddenException } from 'src/common/exceptions/service.exception';
+import { JwtService } from 'src/jwt/jwt.service';
+import { IPayload } from 'src/jwt/interfaces';
+import { TravelPost } from 'src/entities';
 
 @WebSocketGateway({
-  namespace: '/post',
+  namespace: 'post',
   transports: ['websocket', 'polling'],
   cors: { origin: '*' },
 })
 export class EventGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  server: Server;
-  constructor(private readonly gatewayService: EventService) {}
+  @WebSocketServer() server: Server;
+  constructor(
+    private readonly gatewayService: EventService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   afterInit(server: Server) {
-    this.server = server;
-    console.log('WebSocket server initialized');
+    server.use((client: Socket, next) => {
+      try {
+        const token = client.handshake.headers['authorization'];
+        if (!token) {
+          throw ForbiddenException();
+        }
+
+        const user: IPayload = this.jwtService.verifyAccessToken(
+          token.split(' ')[1],
+        );
+        client.data.user = user;
+
+        next();
+      } catch (e) {
+        next(e);
+      }
+    });
   }
 
   handleConnection(client: Socket) {
@@ -37,26 +59,29 @@ export class EventGateway
 
   @SubscribeMessage('joinRoom')
   handleJoinRoom(
-    @MessageBody() postId: string,
     @ConnectedSocket() client: Socket,
+    @MessageBody('postId') postId,
   ) {
-    client.join(postId);
-    console.log(`Client ${client.id} joined room ${postId}`);
+    return this.gatewayService.joinRoom(postId, client);
   }
 
   @SubscribeMessage('leaveRoom')
   handleLeaveRoom(
-    @MessageBody() postId: string,
     @ConnectedSocket() client: Socket,
+    @MessageBody('postId') postId,
   ) {
-    client.leave(postId);
-    console.log(`Client ${client.id} left room ${postId}`);
+    return this.gatewayService.leaveRoom(postId, client);
   }
 
   @SubscribeMessage('updatePost')
-  handleUpdatePost(@MessageBody() data: { postId: string; content: any }) {
+  handleUpdatePost(
+    @MessageBody() data: { postId: string; content: TravelPost },
+  ) {
     const { postId, content } = data;
     this.server.to(postId).emit('postUpdated', content);
-    console.log(`Post ${postId} updated with content:`, content);
+  }
+
+  public notifyPostUpdate(postId: string, content: TravelPost) {
+    this.server.to(postId).emit('postUpdated', content);
   }
 }
