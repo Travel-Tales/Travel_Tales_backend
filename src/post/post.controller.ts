@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
@@ -20,11 +21,23 @@ import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { IPayload } from 'src/jwt/interfaces';
+import { TravelPost } from 'src/entities';
 
 @Controller('post')
 @ApiTags('Post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
+
+  @ApiOperation({
+    summary: '게시물 가져오기',
+    description: '게시물 가져오기',
+  })
+  @Role(['Any'])
+  @UseGuards(RoleGuard)
+  @Get()
+  async getPost(@User() user: IPayload): Promise<TravelPost[]> {
+    return this.postService.getPost(user);
+  }
 
   @ApiOperation({
     summary: '게시물 생성 API',
