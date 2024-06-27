@@ -19,7 +19,7 @@ export class APIInterceptor implements NestInterceptor {
         (data): CoreOutput<any> => ({
           message: 'Request successful',
           success: true,
-          data: data,
+          data: data ?? null,
         }),
       ),
     );
