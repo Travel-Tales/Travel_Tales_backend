@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdateInputDto } from './dtos/update.dto';
@@ -69,6 +70,22 @@ export class PostController {
     @Param('id') id: number,
     @Body() updateInputDto: UpdateInputDto,
   ): Promise<void> {
-    await this.postService.updatePost(id, updateInputDto);
+    return this.postService.updatePost(user, id, updateInputDto);
+  }
+
+  @ApiOperation({
+    summary: '게시물 삭제 API',
+    description: '게시물 삭제',
+  })
+  @ApiBearerAuth('Authorization')
+  @ApiParam({ name: 'id', type: Number })
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
+  @Delete(':id')
+  async deletePost(
+    @User() user: IPayload,
+    @Param('id') id: number,
+  ): Promise<void> {
+    return this.postService.deletePost(user, id);
   }
 }
