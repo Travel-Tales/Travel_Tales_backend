@@ -14,6 +14,7 @@ import { UserModule } from './user/user.module';
 import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import { PostModule } from './post/post.module';
 import { EventModule } from './event/event.module';
+import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 
 @Module({
   imports: [
@@ -71,5 +72,6 @@ export class AppModule implements NestModule {
       .apply(JwtMiddleware)
       .exclude({ path: 'auth/refresh', method: RequestMethod.ALL })
       .forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

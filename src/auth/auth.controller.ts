@@ -47,7 +47,7 @@ export class AuthController {
   @Get('kakao/callback')
   @ApiExcludeEndpoint()
   async kakaoAuthCallback(@Req() req, @Res() res) {
-    const refresh = await this.authService.loginKakao(
+    const { refresh } = await this.authService.loginKakao(
       req.user,
       UserLoginType.Kakao,
     );
