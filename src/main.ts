@@ -6,9 +6,13 @@ import { HttpExceptionFilter } from './common/exceptions/exception.filter';
 import { APIInterceptor } from './common/interceptors/api.interceptor';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
+import { winstonLogger } from './common/utils/winston.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: winstonLogger,
+  });
+  app.useLogger(winstonLogger);
   const PORT = process.env.PORT || 9502;
 
   const corsOptions: CorsOptions = {

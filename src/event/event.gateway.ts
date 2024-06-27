@@ -14,6 +14,7 @@ import { ForbiddenException } from 'src/common/exceptions/service.exception';
 import { JwtService } from 'src/jwt/jwt.service';
 import { IPayload } from 'src/jwt/interfaces';
 import { TravelPost } from 'src/entities';
+import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({
   namespace: 'post',
@@ -23,6 +24,8 @@ import { TravelPost } from 'src/entities';
 export class EventGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  private readonly logger = new Logger('EventGateway');
+
   @WebSocketServer() server: Server;
   constructor(
     private readonly gatewayService: EventService,
@@ -50,11 +53,11 @@ export class EventGateway
   }
 
   handleConnection(client: Socket) {
-    console.log('Client connected:', client.id);
+    this.logger.log(`Client connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
-    console.log('Client disconnected:', client.id);
+    this.logger.log(`Client disconnected: ${client.id}`);
   }
 
   @SubscribeMessage('joinRoom')
