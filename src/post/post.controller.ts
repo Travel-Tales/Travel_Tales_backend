@@ -17,12 +17,14 @@ import {
   ApiParam,
   ApiBody,
   ApiBearerAuth,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { IPayload } from 'src/jwt/interfaces';
 import { TravelPost } from 'src/entities';
+import { GetPostOutputDTO } from './dtos/get.post.dto';
 
 @Controller('post')
 @ApiTags('Post')
@@ -33,6 +35,7 @@ export class PostController {
     summary: '게시물 가져오기',
     description: '게시물 가져오기',
   })
+  @ApiOkResponse({ type: GetPostOutputDTO })
   @Role(['Any'])
   @UseGuards(RoleGuard)
   @Get()
