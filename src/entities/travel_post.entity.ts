@@ -10,35 +10,35 @@ export enum VisibilityStatus {
 
 @Entity()
 export class TravelPost extends CoreEntity {
-  @Column()
+  @Column({ default: '제목 없음' })
   @IsString()
   title: string;
 
-  @Column()
+  @Column({ default: '' })
   @IsString()
   content: string;
 
-  @Column()
+  @Column({ default: null, nullable: true })
   @IsString()
   travelArea: string;
 
-  @Column()
+  @Column({ default: 0 })
   @IsNumber()
   travelerCount: number;
 
-  @Column()
+  @Column({ default: 0 })
   @IsNumber()
   budget: number;
 
-  @Column()
+  @Column({ default: '' })
   @IsString()
   thumnail: string;
 
-  @Column()
+  @Column({ default: new Date() })
   @IsDate()
   startDate: Date;
 
-  @Column()
+  @Column({ default: new Date() })
   @IsDate()
   endDate: Date;
 
