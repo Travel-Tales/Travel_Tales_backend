@@ -49,6 +49,9 @@ export class TravelPost extends CoreEntity {
   @OneToMany(
     () => UserTravelPost,
     (userTravelPost) => userTravelPost.travelPost,
+    {
+      onDelete: 'CASCADE',
+    },
   )
   userTravelPost: UserTravelPost[];
 }

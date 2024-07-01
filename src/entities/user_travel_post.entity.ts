@@ -9,14 +9,13 @@ export class UserTravelPost {
 
   @ManyToOne(() => User, (user) => user.userTravelPost, {
     eager: true,
-    cascade: true,
   })
   @JoinColumn()
   user: User;
 
   @ManyToOne(() => TravelPost, (travelPost) => travelPost.userTravelPost, {
     eager: true,
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   travelPost: TravelPost;
