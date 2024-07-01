@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TravelPost, UserTravelPost, VisibilityStatus } from 'src/entities';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdateInputDto } from './dtos/update.dto';
-import { NotFoundException } from 'src/common/exceptions/service.exception';
+import {
+  ForbiddenException,
+  NotFoundException,
+} from 'src/common/exceptions/service.exception';
 import { IPayload } from 'src/jwt/interfaces';
 import { EventGateway } from 'src/event/event.gateway';
 
@@ -44,14 +47,20 @@ export class PostService {
     return travelPost;
   }
 
-  async updatePost(id: number, updateInputDto: UpdateInputDto) {
-    const post: TravelPost = await this.travelPostRepository.findOne({
-      where: { id },
+  async updatePost(user: IPayload, id: number, updateInputDto: UpdateInputDto) {
+    const userTravelPost = await this.userTravelPostRepository.findOne({
+      where: {
+        user: { id: user.id },
+        travelPost: { id },
+      },
+      relations: ['travelPost'],
     });
 
-    if (!post) {
-      throw NotFoundException('Not found post');
+    if (!userTravelPost) {
+      throw ForbiddenException('Permission to edit this post is denied.');
     }
+
+    const { travelPost: post } = userTravelPost;
 
     await this.travelPostRepository.save([
       {
@@ -61,5 +70,21 @@ export class PostService {
     ]);
 
     this.eventGateway.notifyPostUpdate(String(id), post);
+  }
+
+  async deletePost(user: IPayload, id: number): Promise<void> {
+    const userTravelPost = await this.userTravelPostRepository.findOne({
+      where: {
+        user: { id: user.id },
+        travelPost: { id },
+      },
+      relations: ['travelPost'],
+    });
+
+    if (!userTravelPost) {
+      throw ForbiddenException('Permission to delete this post is denied.');
+    }
+
+    await this.userTravelPostRepository.delete({ id });
   }
 }

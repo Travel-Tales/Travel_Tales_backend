@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdateInputDto } from './dtos/update.dto';
@@ -16,12 +17,14 @@ import {
   ApiParam,
   ApiBody,
   ApiBearerAuth,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { IPayload } from 'src/jwt/interfaces';
 import { TravelPost } from 'src/entities';
+import { GetPostOutputDTO } from './dtos/get.post.dto';
 
 @Controller('post')
 @ApiTags('Post')
@@ -32,6 +35,7 @@ export class PostController {
     summary: '게시물 가져오기',
     description: '게시물 가져오기',
   })
+  @ApiOkResponse({ type: GetPostOutputDTO })
   @Role(['Any'])
   @UseGuards(RoleGuard)
   @Get()
@@ -69,6 +73,22 @@ export class PostController {
     @Param('id') id: number,
     @Body() updateInputDto: UpdateInputDto,
   ): Promise<void> {
-    await this.postService.updatePost(id, updateInputDto);
+    return this.postService.updatePost(user, id, updateInputDto);
+  }
+
+  @ApiOperation({
+    summary: '게시물 삭제 API',
+    description: '게시물 삭제',
+  })
+  @ApiBearerAuth('Authorization')
+  @ApiParam({ name: 'id', type: Number })
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
+  @Delete(':id')
+  async deletePost(
+    @User() user: IPayload,
+    @Param('id') id: number,
+  ): Promise<void> {
+    return this.postService.deletePost(user, id);
   }
 }

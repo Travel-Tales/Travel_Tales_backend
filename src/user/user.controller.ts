@@ -1,8 +1,13 @@
 import { Body, Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
-import { User } from 'src/entities';
+import { MyProfileOutputDTO } from './dto/myprofile.dto';
 import { UserService } from './user.service';
 
 @ApiTags('User')
@@ -14,11 +19,12 @@ export class UserController {
     summary: '유저 정보 API',
     description: '유저 정보',
   })
+  @ApiOkResponse({ type: MyProfileOutputDTO })
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @ApiBearerAuth('Authorization')
   @Get('/profile')
-  async getMyProfile(@Req() req): Promise<User> {
+  async getMyProfile(@Req() req): Promise<MyProfileOutputDTO> {
     return this.userService.getUserInfoByEmail(req.user.email);
   }
 }
