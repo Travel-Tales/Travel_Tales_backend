@@ -15,6 +15,7 @@ export class UserTravelPost {
   user: User;
 
   @ManyToOne(() => TravelPost, (travelPost) => travelPost.userTravelPost, {
+    eager: true,
     cascade: true,
   })
   @JoinColumn()
