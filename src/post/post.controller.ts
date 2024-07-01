@@ -23,7 +23,7 @@ import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { IPayload } from 'src/jwt/interfaces';
-import { TravelPost } from 'src/entities';
+import { UserTravelPost } from 'src/entities';
 import { GetPostOutputDTO } from './dtos/get.post.dto';
 import { PermissionInputDTO } from './dtos/permission.dto';
 
@@ -40,7 +40,7 @@ export class PostController {
   @Role(['Any'])
   @UseGuards(RoleGuard)
   @Get()
-  async getPost(@User() user: IPayload): Promise<TravelPost[]> {
+  async getPost(@User() user: IPayload): Promise<UserTravelPost[]> {
     return this.postService.getPost(user);
   }
 

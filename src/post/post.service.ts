@@ -29,14 +29,15 @@ export class PostService {
     private readonly userService: UserService,
   ) {}
 
-  async getPostById(postId: number): Promise<TravelPost> {
-    return this.travelPostRepository.findOne({ where: { id: postId } });
+  async getPostById(postId: number): Promise<UserTravelPost> {
+    return this.userTravelPostRepository.findOne({
+      where: { travelPost: { id: postId } },
+    });
   }
 
-  async getPost(user: IPayload): Promise<TravelPost[]> {
-    return this.travelPostRepository.find({
-      where: { visibilityStatus: VisibilityStatus.Public },
-      relations: ['userTravelPost'],
+  async getPost(user: IPayload): Promise<UserTravelPost[]> {
+    return this.userTravelPostRepository.find({
+      where: { travelPost: { visibilityStatus: VisibilityStatus.Public } },
     });
   }
 
@@ -89,7 +90,7 @@ export class PostService {
   async deletePost(user: IPayload, id: number): Promise<void> {
     await this.getUserTravelPost(id, user.id);
 
-    await this.userTravelPostRepository.delete({ id });
+    await this.travelPostRepository.delete({ id });
   }
 
   async setPermission(
