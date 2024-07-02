@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TravelPost, UserTravelPost, VisibilityStatus } from 'src/entities';
+import {
+  TravelPost,
+  User,
+  UserTravelPost,
+  VisibilityStatus,
+} from 'src/entities';
 import { Equal, Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdateInputDto } from './dtos/update.dto';
@@ -10,6 +15,8 @@ import {
 } from 'src/common/exceptions/service.exception';
 import { IPayload } from 'src/jwt/interfaces';
 import { EventGateway } from 'src/event/event.gateway';
+import { PermissionInputDTO } from './dtos/permission.dto';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class PostService {
@@ -19,16 +26,18 @@ export class PostService {
     @InjectRepository(UserTravelPost)
     private readonly userTravelPostRepository: Repository<UserTravelPost>,
     private readonly eventGateway: EventGateway,
+    private readonly userService: UserService,
   ) {}
 
-  async getPostById(postId: number): Promise<TravelPost> {
-    return this.travelPostRepository.findOne({ where: { id: postId } });
+  async getPostById(postId: number): Promise<UserTravelPost> {
+    return this.userTravelPostRepository.findOne({
+      where: { travelPost: { id: postId } },
+    });
   }
 
-  async getPost(user: IPayload): Promise<TravelPost[]> {
-    return this.travelPostRepository.find({
-      where: { visibilityStatus: VisibilityStatus.Public },
-      relations: ['userTravelPost'],
+  async getPost(user: IPayload): Promise<UserTravelPost[]> {
+    return this.userTravelPostRepository.find({
+      where: { travelPost: { visibilityStatus: VisibilityStatus.Public } },
     });
   }
 
@@ -47,18 +56,24 @@ export class PostService {
     return travelPost;
   }
 
-  async updatePost(user: IPayload, id: number, updateInputDto: UpdateInputDto) {
+  async getUserTravelPost(id: number, userId: number): Promise<UserTravelPost> {
     const userTravelPost = await this.userTravelPostRepository.findOne({
       where: {
-        user: { id: user.id },
+        user: { id: userId },
         travelPost: { id },
       },
       relations: ['travelPost'],
     });
 
     if (!userTravelPost) {
-      throw ForbiddenException('Permission to edit this post is denied.');
+      throw ForbiddenException('You do not have permission.');
     }
+
+    return userTravelPost;
+  }
+
+  async updatePost(user: IPayload, id: number, updateInputDto: UpdateInputDto) {
+    const userTravelPost = await this.getUserTravelPost(id, user.id);
 
     const { travelPost: post } = userTravelPost;
 
@@ -73,18 +88,24 @@ export class PostService {
   }
 
   async deletePost(user: IPayload, id: number): Promise<void> {
-    const userTravelPost = await this.userTravelPostRepository.findOne({
-      where: {
-        user: { id: user.id },
-        travelPost: { id },
-      },
-      relations: ['travelPost'],
-    });
+    await this.getUserTravelPost(id, user.id);
 
-    if (!userTravelPost) {
-      throw ForbiddenException('Permission to delete this post is denied.');
+    await this.travelPostRepository.delete({ id });
+  }
+
+  async setPermission(
+    user: IPayload,
+    id: number,
+    permissionInputDTO: PermissionInputDTO,
+  ) {
+    await this.getUserTravelPost(id, user.id);
+
+    const userInfo: User = await this.userService.getUserInfoByEmail(
+      permissionInputDTO.email,
+    );
+
+    if (!userInfo) {
+      throw NotFoundException('No registered user matches the provided email.');
     }
-
-    await this.userTravelPostRepository.delete({ id });
   }
 }
