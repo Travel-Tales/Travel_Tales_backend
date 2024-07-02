@@ -23,8 +23,9 @@ import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { IPayload } from 'src/jwt/interfaces';
-import { TravelPost } from 'src/entities';
+import { UserTravelPost } from 'src/entities';
 import { GetPostOutputDTO } from './dtos/get.post.dto';
+import { PermissionInputDTO } from './dtos/permission.dto';
 
 @Controller('post')
 @ApiTags('Post')
@@ -39,7 +40,7 @@ export class PostController {
   @Role(['Any'])
   @UseGuards(RoleGuard)
   @Get()
-  async getPost(@User() user: IPayload): Promise<TravelPost[]> {
+  async getPost(@User() user: IPayload): Promise<UserTravelPost[]> {
     return this.postService.getPost(user);
   }
 
@@ -90,5 +91,23 @@ export class PostController {
     @Param('id') id: number,
   ): Promise<void> {
     return this.postService.deletePost(user, id);
+  }
+
+  @ApiOperation({
+    summary: '게시물 권한 부여 API',
+    description: '게시물 권한 부여',
+  })
+  @ApiBearerAuth('Authorization')
+  @ApiBody({ type: PermissionInputDTO })
+  @ApiParam({ name: 'id', type: Number })
+  @Role(['Any'])
+  @UseGuards(RoleGuard)
+  @Post(':id/permission')
+  async setPermission(
+    @User() user: IPayload,
+    @Param('id') id: number,
+    @Body() permissionInputDTO: PermissionInputDTO,
+  ): Promise<void> {
+    await this.postService.setPermission(user, id, permissionInputDTO);
   }
 }
