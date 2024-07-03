@@ -29,16 +29,9 @@ export class PostService {
     private readonly userService: UserService,
   ) {}
 
-  async getPostById(postId: number): Promise<UserTravelPost> {
-    return this.userTravelPostRepository.findOne({
-      where: { travelPost: { id: postId } },
-    });
-  }
-
-  async getPost(user: IPayload): Promise<UserTravelPost[]> {
-    return this.userTravelPostRepository.find({
-      where: { travelPost: { visibilityStatus: VisibilityStatus.Public } },
-    });
+  async getPost(id: number | undefined): Promise<TravelPost | TravelPost[]> {
+    const where = id ? { id } : { visibilityStatus: VisibilityStatus.Public };
+    return this.travelPostRepository.find({ where });
   }
 
   async createPost(
@@ -62,7 +55,6 @@ export class PostService {
         user: { id: userId },
         travelPost: { id },
       },
-      relations: ['travelPost'],
     });
 
     if (!userTravelPost) {
@@ -89,7 +81,6 @@ export class PostService {
 
   async deletePost(user: IPayload, id: number): Promise<void> {
     await this.getUserTravelPost(id, user.id);
-
     await this.travelPostRepository.delete({ id });
   }
 
