@@ -51,7 +51,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
       entities: [User, UserTravelPost, TravelPost],
       extra: {
         connectionTimeoutMillis: 10000,
-        // ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
+        ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
         postgres: {
           extensions: ['pgvector'],
         },
