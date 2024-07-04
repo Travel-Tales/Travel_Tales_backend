@@ -15,6 +15,7 @@ import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import { PostModule } from './post/post.module';
 import { EventModule } from './event/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { InvitationVerification } from './entities/invitation.verification.entitiy';
 
 @Module({
   imports: [
@@ -48,7 +49,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
       database: process.env.DB_NAME,
       logging: process.env.NODE_ENV === 'dev' ? true : false,
       synchronize: process.env.NODE_ENV === 'dev' ? true : false,
-      entities: [User, UserTravelPost, TravelPost],
+      entities: [User, UserTravelPost, TravelPost, InvitationVerification],
       extra: {
         connectionTimeoutMillis: 10000,
         ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
