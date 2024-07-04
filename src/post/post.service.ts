@@ -17,6 +17,7 @@ import { IPayload } from 'src/jwt/interfaces';
 import { EventGateway } from 'src/event/event.gateway';
 import { PermissionInputDTO } from './dtos/permission.dto';
 import { UserService } from 'src/user/user.service';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class PostService {
@@ -27,6 +28,7 @@ export class PostService {
     private readonly userTravelPostRepository: Repository<UserTravelPost>,
     private readonly eventGateway: EventGateway,
     private readonly userService: UserService,
+    private readonly mailService: MailService,
   ) {}
 
   async getPostById(postId: number): Promise<UserTravelPost> {
@@ -98,14 +100,16 @@ export class PostService {
     id: number,
     permissionInputDTO: PermissionInputDTO,
   ) {
-    await this.getUserTravelPost(id, user.id);
+    const post = await this.getUserTravelPost(id, user.id);
+    const { email } = permissionInputDTO;
 
-    const userInfo: User = await this.userService.getUserInfoByEmail(
-      permissionInputDTO.email,
-    );
+    const userInfo: User = await this.userService.getUserInfoByEmail(email);
 
     if (!userInfo) {
       throw NotFoundException('No registered user matches the provided email.');
     }
+
+    const { title } = post.travelPost;
+    await this.mailService.sendMail(user.nickname, email, title);
   }
 }
