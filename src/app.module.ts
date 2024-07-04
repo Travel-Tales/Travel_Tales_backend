@@ -15,6 +15,7 @@ import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import { PostModule } from './post/post.module';
 import { EventModule } from './event/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
     UserModule,
     PostModule,
     EventModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],
