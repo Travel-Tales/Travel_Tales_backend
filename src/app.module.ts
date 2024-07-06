@@ -16,6 +16,7 @@ import { PostModule } from './post/post.module';
 import { EventModule } from './event/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { MailModule } from './mail/mail.module';
+import { InvitationVerification } from './entities/invitation.verification.entitiy';
 
 @Module({
   imports: [
@@ -49,10 +50,10 @@ import { MailModule } from './mail/mail.module';
       database: process.env.DB_NAME,
       logging: process.env.NODE_ENV === 'dev' ? true : false,
       synchronize: process.env.NODE_ENV === 'dev' ? true : false,
-      entities: [User, UserTravelPost, TravelPost],
+      entities: [User, UserTravelPost, TravelPost, InvitationVerification],
       extra: {
         connectionTimeoutMillis: 10000,
-        // ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
+        ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
         postgres: {
           extensions: ['pgvector'],
         },

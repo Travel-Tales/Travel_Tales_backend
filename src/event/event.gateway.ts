@@ -18,7 +18,7 @@ import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({
   namespace: 'post',
-  transports: ['websocket', 'polling'],
+  transports: ['websocket'],
   cors: { origin: '*' },
 })
 export class EventGateway
@@ -26,30 +26,35 @@ export class EventGateway
 {
   private readonly logger = new Logger('EventGateway');
 
-  @WebSocketServer() server: Server;
+  @WebSocketServer()
+  server: Server;
+
   constructor(
     private readonly gatewayService: EventService,
     private readonly jwtService: JwtService,
   ) {}
 
   afterInit(server: Server) {
-    server.use((client: Socket, next) => {
-      try {
-        const token = client.handshake.headers['authorization'];
-        if (!token) {
-          throw ForbiddenException();
-        }
+    this.server = server;
+  }
 
-        const user: IPayload = this.jwtService.verifyAccessToken(
-          token.split(' ')[1],
-        );
-        client.data.user = user;
-
-        next();
-      } catch (e) {
-        next(e);
+  @SubscribeMessage('setInit')
+  handleSetInit(client: Socket) {
+    try {
+      const token = client.handshake.auth.Authorization;
+      if (!token) {
+        throw new Error();
       }
-    });
+
+      const user: IPayload = this.jwtService.verifyAccessToken(
+        token.split(' ')[1],
+      );
+      client.data.user = user;
+      client.emit('setInitSuccess', { message: 'Initialization successful' });
+    } catch (e) {
+      client.emit('error', { message: 'Invalid Token' });
+      client.disconnect();
+    }
   }
 
   handleConnection(client: Socket) {
@@ -76,15 +81,8 @@ export class EventGateway
     return this.gatewayService.leaveRoom(postId, client);
   }
 
-  @SubscribeMessage('updatePost')
-  handleUpdatePost(
-    @MessageBody() data: { postId: string; content: TravelPost },
-  ) {
-    const { postId, content } = data;
-    this.server.to(postId).emit('postUpdated', content);
-  }
-
   public notifyPostUpdate(postId: string, content: TravelPost) {
-    this.server.to(postId).emit('postUpdated', content);
+    console.log('🚀 ~ notifyPostUpdate ~ content:', content);
+    this.server.to(postId).emit('postUpdate', content);
   }
 }
