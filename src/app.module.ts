@@ -15,6 +15,7 @@ import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import { PostModule } from './post/post.module';
 import { EventModule } from './event/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { MailModule } from './mail/mail.module';
 import { InvitationVerification } from './entities/invitation.verification.entitiy';
 
 @Module({
@@ -63,6 +64,7 @@ import { InvitationVerification } from './entities/invitation.verification.entit
     UserModule,
     PostModule,
     EventModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],
