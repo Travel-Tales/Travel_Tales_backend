@@ -18,7 +18,7 @@ import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({
   namespace: 'post',
-  transports: ['websocket', 'polling'],
+  transports: ['websocket'],
   cors: { origin: '*' },
 })
 export class EventGateway
@@ -65,6 +65,7 @@ export class EventGateway
     @ConnectedSocket() client: Socket,
     @MessageBody('postId') postId,
   ) {
+    console.log('hi');
     return this.gatewayService.joinRoom(postId, client);
   }
 
@@ -74,14 +75,6 @@ export class EventGateway
     @MessageBody('postId') postId,
   ) {
     return this.gatewayService.leaveRoom(postId, client);
-  }
-
-  @SubscribeMessage('updatePost')
-  handleUpdatePost(
-    @MessageBody() data: { postId: string; content: TravelPost },
-  ) {
-    const { postId, content } = data;
-    this.server.to(postId).emit('postUpdated', content);
   }
 
   public notifyPostUpdate(postId: string, content: TravelPost) {
