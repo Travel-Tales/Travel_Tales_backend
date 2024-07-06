@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserLoginType } from '../entities/user.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -25,5 +26,9 @@ export class UserService {
 
   async getUserInfo(id: number): Promise<User> {
     return this.userRepository.findOne({ where: { id } });
+  }
+
+  async generateCode(): Promise<uuidv4> {
+    return uuidv4();
   }
 }
