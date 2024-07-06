@@ -23,7 +23,7 @@ import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { User } from 'src/common/decorators/user.decorator';
 import { IPayload } from 'src/jwt/interfaces';
-import { UserTravelPost } from 'src/entities';
+import { TravelPost, UserTravelPost } from 'src/entities';
 import { GetPostOutputDTO } from './dtos/get.post.dto';
 import { PermissionInputDTO } from './dtos/permission.dto';
 
@@ -36,12 +36,19 @@ export class PostController {
     summary: '게시물 가져오기',
     description: '게시물 가져오기',
   })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    required: false,
+  })
   @ApiOkResponse({ type: GetPostOutputDTO })
   @Role(['Any'])
   @UseGuards(RoleGuard)
-  @Get()
-  async getPost(@User() user: IPayload): Promise<UserTravelPost[]> {
-    return this.postService.getPost(user);
+  @Get(':id?')
+  async getPost(
+    @Param('id') id: number | undefined,
+  ): Promise<TravelPost | TravelPost[]> {
+    return this.postService.getPost(id);
   }
 
   @ApiOperation({
