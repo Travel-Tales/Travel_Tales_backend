@@ -27,8 +27,4 @@ export class UserService {
   async getUserInfo(id: number): Promise<User> {
     return this.userRepository.findOne({ where: { id } });
   }
-
-  async generateCode(): Promise<uuidv4> {
-    return uuidv4();
-  }
 }
