@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  Post,
+  UseGuards,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -27,4 +36,8 @@ export class UserController {
   async getMyProfile(@Req() req): Promise<MyProfileOutputDTO> {
     return this.userService.getUserInfoByEmail(req.user.email);
   }
+
+  @Post('profile/upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {}
 }
