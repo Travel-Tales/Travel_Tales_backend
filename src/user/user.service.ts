@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserLoginType } from '../entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { AwsService } from 'src/aws/aws.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly awsService: AwsService,
   ) {}
 
   async getUserInfoByEmail(email: string): Promise<User> {
@@ -26,5 +28,12 @@ export class UserService {
 
   async getUserInfo(id: number): Promise<User> {
     return this.userRepository.findOne({ where: { id } });
+  }
+
+  async uploadUserProfile(file: Express.Multer.File): Promise<void> {
+    if (file.mimetype !== 'image/png') {
+    }
+
+    return this.awsService.uploadFile(file);
   }
 }
