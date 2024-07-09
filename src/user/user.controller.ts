@@ -10,6 +10,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -37,6 +39,26 @@ export class UserController {
     return this.userService.getUserInfoByEmail(req.user.email);
   }
 
+  @ApiOperation({
+    summary: '유저 프로필 업로드 API',
+    description: '유저 프로필 업로드',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    required: true,
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
+  @ApiBearerAuth('Authorization')
   @Post('profile/upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<void> {
