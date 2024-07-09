@@ -2,21 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   TravelPost,
-  User,
   UserTravelPost,
   VisibilityStatus,
+  InvitationVerification,
 } from 'src/entities';
-import { Equal, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdateInputDto } from './dtos/update.dto';
-import {
-  ForbiddenException,
-  NotFoundException,
-} from 'src/common/exceptions/service.exception';
+import { ForbiddenException } from 'src/common/exceptions/service.exception';
 import { IPayload } from 'src/jwt/interfaces';
 import { EventGateway } from 'src/event/event.gateway';
 import { PermissionInputDTO } from './dtos/permission.dto';
-import { UserService } from 'src/user/user.service';
 import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
@@ -26,8 +22,9 @@ export class PostService {
     private readonly travelPostRepository: Repository<TravelPost>,
     @InjectRepository(UserTravelPost)
     private readonly userTravelPostRepository: Repository<UserTravelPost>,
+    @InjectRepository(InvitationVerification)
+    private readonly InvitationRepository: Repository<InvitationVerification>,
     private readonly eventGateway: EventGateway,
-    private readonly userService: UserService,
     private readonly mailService: MailService,
   ) {}
 
@@ -94,13 +91,13 @@ export class PostService {
     const post = await this.getUserTravelPost(id, user.id);
     const { email } = permissionInputDTO;
 
-    const userInfo: User = await this.userService.getUserInfoByEmail(email);
+    const invitation: InvitationVerification =
+      await this.InvitationRepository.create({ email, postId: id });
+    invitation.createCode();
 
-    if (!userInfo) {
-      throw NotFoundException('No registered user matches the provided email.');
-    }
+    await this.InvitationRepository.upsert(invitation, ['email', 'postId']);
 
     const { title } = post.travelPost;
-    await this.mailService.sendMail(user.nickname, email, title);
+    // await this.mailService.sendMail(user.nickname, email, title);
   }
 }

@@ -7,7 +7,12 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User, UserTravelPost, TravelPost } from './entities';
+import {
+  User,
+  UserTravelPost,
+  TravelPost,
+  InvitationVerification,
+} from './entities';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
@@ -16,7 +21,6 @@ import { PostModule } from './post/post.module';
 import { EventModule } from './event/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { MailModule } from './mail/mail.module';
-import { InvitationVerification } from './entities/invitation.verification.entitiy';
 
 @Module({
   imports: [
