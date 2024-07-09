@@ -21,6 +21,7 @@ import { PostModule } from './post/post.module';
 import { EventModule } from './event/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { MailModule } from './mail/mail.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { MailModule } from './mail/mail.module';
     PostModule,
     EventModule,
     MailModule,
+    AwsModule,
   ],
   controllers: [],
   providers: [],

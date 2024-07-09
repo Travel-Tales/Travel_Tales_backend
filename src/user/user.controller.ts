@@ -39,5 +39,7 @@ export class UserController {
 
   @Post('profile/upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {}
+  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<void> {
+    return this.userService.uploadUserProfile(file);
+  }
 }
