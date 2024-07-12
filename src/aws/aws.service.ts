@@ -2,6 +2,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { User } from 'src/entities';
+import { IBucketOption } from './interfaces';
 
 @Injectable()
 export class AwsService {
@@ -12,7 +13,7 @@ export class AwsService {
   }
 
   async uploadFile(file: Express.Multer.File, profile: User): Promise<string> {
-    const params = {
+    const params: IBucketOption = {
       Bucket: 'traveltales/images',
       Key: `${new Date().toISOString()}_${profile.email}_profile`,
       Body: file.buffer,
@@ -27,11 +28,15 @@ export class AwsService {
   }
 
   async deleteFile(imageUrl: string): Promise<void> {
-    const params = {
+    const url: string = decodeURIComponent(imageUrl.split('images/')[1]);
+
+    const params: IBucketOption = {
       Bucket: 'traveltales/images',
-      Key: imageUrl,
+      Key: url,
     };
 
-    await this.s3.deleteObject(params).promise;
+    console.log('🚀 ~ AwsService ~ deleteFile ~ params:', params);
+
+    await this.s3.deleteObject(params).promise();
   }
 }
