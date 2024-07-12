@@ -1,6 +1,7 @@
 // src/utils/aws.service.ts
 import { Injectable, Inject } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
+import { User } from 'src/entities';
 
 @Injectable()
 export class AwsService {
@@ -10,13 +11,14 @@ export class AwsService {
     this.s3 = new this.aws.S3();
   }
 
-  async uploadFile(file: Express.Multer.File): Promise<void> {
+  async uploadFile(file: Express.Multer.File, profile: User): Promise<string> {
     const params = {
-      Bucket: 'traveltales',
-      Key: file.originalname,
+      Bucket: 'traveltales/images',
+      Key: `${new Date().toISOString()}_${profile.email}_profile`,
       Body: file.buffer,
+      ContentType: file.mimetype,
     };
 
-    await this.s3.upload(params).promise();
+    return (await this.s3.upload(params).promise()).Location;
   }
 }
