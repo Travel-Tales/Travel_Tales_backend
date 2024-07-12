@@ -19,6 +19,19 @@ export class AwsService {
       ContentType: file.mimetype,
     };
 
+    if (profile.imageUrl) {
+      await this.deleteFile(profile.imageUrl);
+    }
+
     return (await this.s3.upload(params).promise()).Location;
+  }
+
+  async deleteFile(imageUrl: string): Promise<void> {
+    const params = {
+      Bucket: 'traveltales/images',
+      Key: imageUrl,
+    };
+
+    await this.s3.deleteObject(params).promise;
   }
 }
