@@ -48,6 +48,7 @@ export class UserController {
     required: true,
     schema: {
       type: 'object',
+      required: ['file'],
       properties: {
         file: {
           type: 'string',
@@ -61,7 +62,10 @@ export class UserController {
   @ApiBearerAuth('Authorization')
   @Post('profile/upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<void> {
-    return this.userService.uploadUserProfile(file);
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req,
+  ): Promise<void> {
+    return this.userService.uploadUserProfile(file, req.user);
   }
 }

@@ -30,10 +30,14 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async uploadUserProfile(file: Express.Multer.File): Promise<void> {
+  async uploadUserProfile(
+    file: Express.Multer.File,
+    profile: User,
+  ): Promise<void> {
     if (file.mimetype !== 'image/png') {
     }
 
-    return this.awsService.uploadFile(file);
+    const imageUrl = await this.awsService.uploadFile(file, profile);
+    await this.userRepository.save({ id: profile.id, imageUrl });
   }
 }
