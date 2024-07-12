@@ -1,9 +1,4 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -16,7 +11,6 @@ import {
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
-import { JwtMiddleware } from './common/middlewares/jwt.middleware';
 import { PostModule } from './post/post.module';
 import { EventModule } from './event/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
@@ -77,10 +71,6 @@ import { AwsModule } from './aws/aws.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer
-      .apply(JwtMiddleware)
-      .exclude({ path: 'auth/refresh', method: RequestMethod.ALL })
-      .forRoutes('*');
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }
