@@ -48,6 +48,7 @@ export class UserController {
     required: true,
     schema: {
       type: 'object',
+      required: ['file'],
       properties: {
         file: {
           type: 'string',
