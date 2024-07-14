@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { UserLoginType } from 'src/entities';
+import { User, UserLoginType } from 'src/entities';
 import { ITokens } from 'src/jwt/interfaces';
 import { ApiTags, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
-import { User } from 'src/common/decorators/user.decorator';
+import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -22,9 +22,9 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   @Get('google/callback')
   @ApiExcludeEndpoint()
-  async googleAuthCallback(@User() user, @Res() res) {
+  async googleAuthCallback(@UserInfo() userInfo: User, @Res() res) {
     const { refresh } = await this.authService.loginGoogle(
-      user,
+      userInfo,
       UserLoginType.Google,
     );
 
@@ -46,9 +46,9 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   @Get('kakao/callback')
   @ApiExcludeEndpoint()
-  async kakaoAuthCallback(@User() user, @Res() res) {
+  async kakaoAuthCallback(@UserInfo() userInfo: User, @Res() res) {
     const { refresh } = await this.authService.loginKakao(
-      user,
+      userInfo,
       UserLoginType.Kakao,
     );
 
@@ -66,10 +66,11 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(AuthGuard('refresh'))
   async updateAccessToken(
-    @User() user,
+    @UserInfo() userInfo: User,
     @Res({ passthrough: true }) res,
   ): Promise<ITokens> {
-    const { refresh, access } = await this.authService.updateAccessToken(user);
+    const { refresh, access } =
+      await this.authService.updateAccessToken(userInfo);
 
     res.cookie('refresh', refresh, {
       httpOnly: true,

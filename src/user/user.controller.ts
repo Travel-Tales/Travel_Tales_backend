@@ -17,8 +17,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
-import { User } from 'src/common/decorators/user.decorator';
+import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
+import { User } from 'src/entities';
 import { MyProfileOutputDTO } from './dto/myprofile.dto';
 import { UserService } from './user.service';
 
@@ -36,8 +37,8 @@ export class UserController {
   @UseGuards(RoleGuard)
   @ApiBearerAuth('Authorization')
   @Get('/profile')
-  async getMyProfile(@User() user): Promise<MyProfileOutputDTO> {
-    return this.userService.getUserInfoByEmail(user.email);
+  async getMyProfile(@UserInfo() userInfo: User): Promise<MyProfileOutputDTO> {
+    return this.userService.getUserInfoByEmail(userInfo.email);
   }
 
   @ApiOperation({
@@ -65,8 +66,8 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
-    @User() user,
+    @UserInfo() userInfo: User,
   ): Promise<void> {
-    return this.userService.uploadUserProfile(file, user);
+    return this.userService.uploadUserProfile(file, userInfo);
   }
 }
