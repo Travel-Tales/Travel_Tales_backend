@@ -21,9 +21,8 @@ import {
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
-import { User } from 'src/common/decorators/user.decorator';
-import { IPayload } from 'src/jwt/interfaces';
-import { TravelPost, UserTravelPost } from 'src/entities';
+import { UserInfo } from 'src/common/decorators/userInfo.decorator';
+import { TravelPost, User, UserTravelPost } from 'src/entities';
 import { GetPostOutputDTO } from './dtos/get.post.dto';
 import { PermissionInputDTO } from './dtos/permission.dto';
 
@@ -60,10 +59,10 @@ export class PostController {
   @UseGuards(RoleGuard)
   @Post()
   async createPost(
-    @User() user: IPayload,
+    @UserInfo() userInfo: User,
     @Body() createInputDto: CreateInputDto,
   ): Promise<CreateOutPutDto> {
-    return this.postService.createPost(user, createInputDto);
+    return this.postService.createPost(userInfo, createInputDto);
   }
 
   @ApiOperation({
@@ -77,11 +76,11 @@ export class PostController {
   @Patch(':id')
   @ApiBody({ type: UpdateInputDto })
   async updatePost(
-    @User() user: IPayload,
+    @UserInfo() userInfo: User,
     @Param('id') id: number,
     @Body() updateInputDto: UpdateInputDto,
   ): Promise<void> {
-    return this.postService.updatePost(user, id, updateInputDto);
+    return this.postService.updatePost(userInfo, id, updateInputDto);
   }
 
   @ApiOperation({
@@ -94,10 +93,10 @@ export class PostController {
   @UseGuards(RoleGuard)
   @Delete(':id')
   async deletePost(
-    @User() user: IPayload,
+    @UserInfo() userInfo: User,
     @Param('id') id: number,
   ): Promise<void> {
-    return this.postService.deletePost(user, id);
+    return this.postService.deletePost(userInfo, id);
   }
 
   @ApiOperation({
@@ -111,10 +110,10 @@ export class PostController {
   @UseGuards(RoleGuard)
   @Post(':id/permission')
   async setPermission(
-    @User() user: IPayload,
+    @UserInfo() userInfo: User,
     @Param('id') id: number,
     @Body() permissionInputDTO: PermissionInputDTO,
   ): Promise<void> {
-    await this.postService.setPermission(user, id, permissionInputDTO);
+    await this.postService.setPermission(userInfo, id, permissionInputDTO);
   }
 }
