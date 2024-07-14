@@ -22,9 +22,9 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   @Get('google/callback')
   @ApiExcludeEndpoint()
-  async googleAuthCallback(@Req() req, @Res() res) {
+  async googleAuthCallback(@User() user, @Res() res) {
     const { refresh } = await this.authService.loginGoogle(
-      req.user,
+      user,
       UserLoginType.Google,
     );
 
@@ -46,9 +46,9 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   @Get('kakao/callback')
   @ApiExcludeEndpoint()
-  async kakaoAuthCallback(@Req() req, @Res() res) {
+  async kakaoAuthCallback(@User() user, @Res() res) {
     const { refresh } = await this.authService.loginKakao(
-      req.user,
+      user,
       UserLoginType.Kakao,
     );
 
