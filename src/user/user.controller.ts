@@ -1,11 +1,11 @@
 import {
   Controller,
   Get,
-  Req,
   Post,
   UseGuards,
   UploadedFile,
   UseInterceptors,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -68,6 +68,10 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
     @UserInfo() userInfo: User,
   ): Promise<void> {
+    if (!file) {
+      throw new BadRequestException('File is required and cannot be empty.');
+    }
+
     return this.userService.uploadUserProfile(file, userInfo);
   }
 }
