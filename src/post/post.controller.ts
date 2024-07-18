@@ -106,7 +106,7 @@ export class PostController {
   @ApiBearerAuth('Authorization')
   @ApiBody({ type: PermissionInputDTO })
   @ApiParam({ name: 'id', type: Number })
-  @Role(['Any'])
+  @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @Post(':id/permission')
   async setPermission(
