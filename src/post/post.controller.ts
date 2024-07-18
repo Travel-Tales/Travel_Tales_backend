@@ -32,6 +32,21 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @ApiOperation({
+    summary: '내 게시물 가져오기 API',
+    description: '내 게시물 가져오기',
+  })
+  @ApiBearerAuth('Authorization')
+  @ApiOkResponse({ type: [GetPostOutputDTO] })
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
+  @Get('/my-post')
+  async getMyPost(@UserInfo() userInfo: User): Promise<void> {
+    const a = await this.postService.getMyPost(userInfo);
+
+    return;
+  }
+
+  @ApiOperation({
     summary: '게시물 가져오기',
     description: '게시물 가져오기',
   })

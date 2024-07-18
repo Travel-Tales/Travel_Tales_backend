@@ -98,6 +98,15 @@ export class PostService {
     await this.InvitationRepository.upsert(invitation, ['email', 'postId']);
 
     const { title } = post.travelPost;
-    // await this.mailService.sendMail(user.nickname, email, title);
+    await this.mailService.sendMail(user.nickname, email, title);
+  }
+
+  async getMyPost(userInfo: User): Promise<void> {
+    const userTravelPosts = await this.userTravelPostRepository
+      .createQueryBuilder('utp')
+      .select(['utp.travelPost']) // Include id of UserTravelPost for debugging
+      .innerJoinAndSelect('utp.travelPost', 'travelPost') // Use innerJoinAndSelect to fetch related TravelPost
+      .where('utp.user = :userId', { userId: userInfo.id }) // Ensure the condition matches the user id correctly
+      .getMany();
   }
 }
