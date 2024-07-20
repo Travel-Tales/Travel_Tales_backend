@@ -40,10 +40,8 @@ export class PostController {
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @Get('/my-post')
-  async getMyPost(@UserInfo() userInfo: User): Promise<void> {
-    const a = await this.postService.getMyPost(userInfo);
-
-    return;
+  async getMyPost(@UserInfo() userInfo: User): Promise<TravelPost[]> {
+    return this.postService.getMyPost(userInfo);
   }
 
   @ApiOperation({
