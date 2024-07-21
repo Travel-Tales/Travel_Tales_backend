@@ -52,7 +52,7 @@ import { AwsModule } from './aws/aws.module';
       entities: [User, UserTravelPost, TravelPost, InvitationVerification],
       extra: {
         connectionTimeoutMillis: 10000,
-        // ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
+        ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
         postgres: {
           extensions: ['pgvector'],
         },
