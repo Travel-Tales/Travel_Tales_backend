@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { IPayload } from 'src/jwt/interfaces';
+import { User } from '../../entities/user.entity';
 
-export const User = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext): IPayload => {
+export const UserInfo = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext): User => {
     const request = ctx.switchToHttp().getRequest();
     return request.user;
   },

@@ -1,11 +1,11 @@
 import {
   Controller,
   Get,
-  Req,
   Post,
   UseGuards,
   UploadedFile,
   UseInterceptors,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -17,7 +17,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
+import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
+import { User } from 'src/entities';
 import { MyProfileOutputDTO } from './dto/myprofile.dto';
 import { UserService } from './user.service';
 
@@ -35,8 +37,8 @@ export class UserController {
   @UseGuards(RoleGuard)
   @ApiBearerAuth('Authorization')
   @Get('/profile')
-  async getMyProfile(@Req() req): Promise<MyProfileOutputDTO> {
-    return this.userService.getUserInfoByEmail(req.user.email);
+  async getMyProfile(@UserInfo() userInfo: User): Promise<MyProfileOutputDTO> {
+    return this.userService.getUserInfoByEmail(userInfo.email);
   }
 
   @ApiOperation({
@@ -64,8 +66,12 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
-    @Req() req,
+    @UserInfo() userInfo: User,
   ): Promise<void> {
-    return this.userService.uploadUserProfile(file, req.user);
+    if (!file) {
+      throw new BadRequestException('File is required and cannot be empty.');
+    }
+
+    return this.userService.uploadUserProfile(file, userInfo);
   }
 }

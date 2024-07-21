@@ -1,22 +1,29 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { TravelPost } from './travel_post.entity';
 import { User } from './user.entity';
 
 @Entity()
 export class UserTravelPost {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryColumn()
+  userId: number;
 
-  @ManyToOne(() => User, (user) => user.userTravelPost, {
-    eager: true,
-  })
-  @JoinColumn()
+  @PrimaryColumn()
+  postId: number;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ManyToOne(() => User, (user) => user.userTravelPost)
+  @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => TravelPost, (travelPost) => travelPost.userTravelPost, {
-    eager: true,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
+  @ManyToOne(() => TravelPost, (travelPost) => travelPost.userTravelPost)
+  @JoinColumn({ name: 'postId' })
   travelPost: TravelPost;
 }

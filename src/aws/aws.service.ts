@@ -35,8 +35,6 @@ export class AwsService {
       Key: url,
     };
 
-    console.log('🚀 ~ AwsService ~ deleteFile ~ params:', params);
-
     await this.s3.deleteObject(params).promise();
   }
 }
