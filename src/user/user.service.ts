@@ -32,12 +32,12 @@ export class UserService {
 
   async uploadUserProfile(
     file: Express.Multer.File,
-    profile: User,
+    user: User,
   ): Promise<void> {
     if (file.mimetype !== 'image/png') {
     }
 
-    const imageUrl = await this.awsService.uploadFile(file, profile);
-    await this.userRepository.save({ id: profile.id, imageUrl });
+    const imageUrl = await this.awsService.uploadFile(file, user);
+    await this.userRepository.save({ id: user.id, imageUrl });
   }
 }

@@ -30,12 +30,13 @@ export class RoleGuard implements CanActivate {
       throw ForbiddenException('Authorization not found');
     }
 
-    const token = req.headers.authorization.split(' ')[1];
+    const token = authorizationHeader.split(' ')[1];
 
     const decodedToken = this.jwtService.verifyAccessToken(token);
 
     if (typeof decodedToken === 'object' && decodedToken.hasOwnProperty('id')) {
       const user = await this.userService.getUserInfo(decodedToken.id);
+
       if (!user) {
         throw ForbiddenException('User not found');
       }

@@ -48,10 +48,6 @@ export class GetPostOutputDTO {
   @ApiProperty({ description: '공개여부' })
   visibilityStatus: VisibilityStatus;
 
-  @Type(() => MyProfileOutputDTO)
-  @ApiProperty({ type: [MyProfileOutputDTO], description: '유저 여행 게시물' })
-  userTravelPost: MyProfileOutputDTO[];
-
   @IsDate()
   @ApiProperty({ description: '생성일' })
   createdAt: Date;

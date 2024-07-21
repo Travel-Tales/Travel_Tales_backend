@@ -5,12 +5,12 @@ import {
   UserTravelPost,
   VisibilityStatus,
   InvitationVerification,
+  User,
 } from 'src/entities';
 import { Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdateInputDto } from './dtos/update.dto';
 import { ForbiddenException } from 'src/common/exceptions/service.exception';
-import { IPayload } from 'src/jwt/interfaces';
 import { EventGateway } from 'src/event/event.gateway';
 import { PermissionInputDTO } from './dtos/permission.dto';
 import { MailService } from 'src/mail/mail.service';
@@ -63,7 +63,7 @@ export class PostService {
     return userTravelPost;
   }
 
-  async updatePost(user: IPayload, id: number, updateInputDto: UpdateInputDto) {
+  async updatePost(user: User, id: number, updateInputDto: UpdateInputDto) {
     const userTravelPost = await this.getUserTravelPost(id, user.id);
 
     const { travelPost: post } = userTravelPost;
@@ -78,13 +78,13 @@ export class PostService {
     this.eventGateway.notifyPostUpdate(String(id), post);
   }
 
-  async deletePost(user: IPayload, id: number): Promise<void> {
+  async deletePost(user: User, id: number): Promise<void> {
     await this.getUserTravelPost(id, user.id);
     await this.travelPostRepository.delete({ id });
   }
 
   async setPermission(
-    user: IPayload,
+    user: User,
     id: number,
     permissionInputDTO: PermissionInputDTO,
   ) {
@@ -98,6 +98,15 @@ export class PostService {
     await this.InvitationRepository.upsert(invitation, ['email', 'postId']);
 
     const { title } = post.travelPost;
-    // await this.mailService.sendMail(user.nickname, email, title);
+    await this.mailService.sendMail(user.nickname, email, title);
+  }
+
+  async getMyPost(userInfo: User): Promise<TravelPost[]> {
+    return this.travelPostRepository
+      .createQueryBuilder('tp')
+      .innerJoinAndSelect('tp.userTravelPost', 'utp')
+      .select(['tp'])
+      .where('utp.userId = :userId', { userId: userInfo.id })
+      .getMany();
   }
 }

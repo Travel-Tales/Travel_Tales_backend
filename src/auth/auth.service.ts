@@ -44,7 +44,7 @@ export class AuthService {
     return { refresh };
   }
 
-  async updateAccessToken(user: IPayload): Promise<ITokens> {
+  async updateAccessToken(user: User): Promise<ITokens> {
     let userInfo = await this.userService.getUserInfoByEmail(user.email);
 
     const refresh = this.jwtService.createRefreshToken(userInfo);
