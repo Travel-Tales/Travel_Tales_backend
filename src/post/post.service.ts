@@ -64,18 +64,18 @@ export class PostService {
   }
 
   async updatePost(user: User, id: number, updateInputDto: UpdateInputDto) {
-    const userTravelPost = await this.getUserTravelPost(id, user.id);
+    await this.getUserTravelPost(id, user.id);
 
-    const { travelPost: post } = userTravelPost;
+    const [post] = this.travelPostRepository.create(
+      await this.travelPostRepository.save([
+        {
+          id,
+          ...updateInputDto,
+        },
+      ]),
+    );
 
-    await this.travelPostRepository.save([
-      {
-        id,
-        ...updateInputDto,
-      },
-    ]);
-
-    this.eventGateway.notifyPostUpdate(String(id), post);
+    await this.eventGateway.notifyPostUpdate(String(id), post);
   }
 
   async deletePost(user: User, id: number): Promise<void> {
