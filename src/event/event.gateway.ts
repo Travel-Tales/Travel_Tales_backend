@@ -41,7 +41,7 @@ export class EventGateway
   @SubscribeMessage('setInit')
   handleSetInit(client: Socket) {
     try {
-      const token = client.handshake.auth.Authorization;
+      const token = client.handshake.headers.authorization;
       if (!token) {
         throw new Error();
       }
@@ -81,8 +81,7 @@ export class EventGateway
     return this.gatewayService.leaveRoom(postId, client);
   }
 
-  public notifyPostUpdate(postId: string, content: TravelPost) {
-    console.log('🚀 ~ notifyPostUpdate ~ content:', content);
-    this.server.to(postId).emit('postUpdate', content);
+  public notifyPostUpdate(postId: string, post: TravelPost) {
+    this.server.to(postId).emit('postUpdate', post);
   }
 }
