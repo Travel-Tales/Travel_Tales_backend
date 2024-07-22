@@ -6,6 +6,8 @@ import {
   UploadedFile,
   UseInterceptors,
   BadRequestException,
+  Patch,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -21,6 +23,10 @@ import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { User } from 'src/entities';
 import { MyProfileOutputDTO } from './dto/myprofile.dto';
+import {
+  UpdateProfileInputDto,
+  UpdateProfileOutputDto,
+} from './dto/update.profile.dto';
 import { UserService } from './user.service';
 
 @ApiTags('User')
@@ -73,5 +79,22 @@ export class UserController {
     }
 
     return this.userService.uploadUserProfile(file, userInfo);
+  }
+
+  @ApiOperation({
+    summary: '유저 프로필 수정 API',
+    description: '유저 프로필 수정',
+  })
+  @ApiBody({ type: UpdateProfileInputDto })
+  @ApiOkResponse({ type: UpdateProfileOutputDto })
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
+  @ApiBearerAuth('Authorization')
+  @Patch('profile')
+  async updateProfile(
+    @UserInfo() user: User,
+    @Body() updateProfileInputDto: UpdateProfileInputDto,
+  ): Promise<UpdateProfileOutputDto> {
+    return this.userService.updateProfile(user, updateProfileInputDto);
   }
 }
