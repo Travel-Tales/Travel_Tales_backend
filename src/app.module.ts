@@ -7,6 +7,7 @@ import {
   UserTravelPost,
   TravelPost,
   InvitationVerification,
+  TravelPostImage,
 } from './entities';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
@@ -49,7 +50,13 @@ import { AwsModule } from './aws/aws.module';
       database: process.env.DB_NAME,
       logging: process.env.NODE_ENV === 'dev' ? true : false,
       synchronize: process.env.NODE_ENV === 'dev' ? true : false,
-      entities: [User, UserTravelPost, TravelPost, InvitationVerification],
+      entities: [
+        User,
+        UserTravelPost,
+        TravelPost,
+        InvitationVerification,
+        TravelPostImage,
+      ],
       extra: {
         connectionTimeoutMillis: 10000,
         ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
