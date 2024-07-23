@@ -2,7 +2,7 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { UserTravelPost } from './user_travel_post.entity';
-import { TravelPostImage } from './post_image.entity';
+import { TravelPostImage } from './travel_post_image.entity';
 
 export enum VisibilityStatus {
   Public = 'Public',
