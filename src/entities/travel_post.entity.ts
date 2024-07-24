@@ -15,7 +15,7 @@ export class TravelPost extends CoreEntity {
   @IsString()
   title: string;
 
-  @Column({ default: '' })
+  @Column({ type: 'text', default: '' })
   @IsString()
   content: string;
 
@@ -33,7 +33,7 @@ export class TravelPost extends CoreEntity {
 
   @Column({ default: '' })
   @IsString()
-  thumnail: string;
+  thumbnail: string;
 
   @Column({ default: new Date() })
   @IsDate()
