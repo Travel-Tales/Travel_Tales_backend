@@ -34,26 +34,15 @@ export class UserService {
     return this.userRepository.findOne({ where: { id } });
   }
 
-  async uploadUserProfile(
-    file: Express.Multer.File,
-    user: User,
-  ): Promise<void> {
-    if (file.mimetype !== 'image/png') {
-    }
-
-    const imageUrl = await this.awsService.uploadFile(file, user);
-    await this.userRepository.save({ id: user.id, imageUrl });
-  }
-
   async updateProfile(
     user: User,
     updateProfileInputDto: UpdateProfileInputDto,
+    file: Express.Multer.File,
   ): Promise<UpdateProfileOutputDto> {
-    const profileInfo = { ...user, updateProfileInputDto };
-    const [profile] = await this.userRepository.create(
+    const imageUrl = await this.awsService.uploadFile(file, user);
+    const profileInfo = { ...user, ...updateProfileInputDto, imageUrl };
+    return this.userRepository.create(
       await this.userRepository.save([profileInfo]),
-    );
-
-    return profile;
+    )[0];
   }
 }
