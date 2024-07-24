@@ -9,9 +9,9 @@ export class UpdateProfileInputDto {
   @ApiProperty({ description: '유저 닉네임' })
   nickname?: string;
 
-  @IsFile() // 파일 검증을 위한 데코레이터 (추가 설치 필요)
+  @IsFile()
   @IsOptional()
-  imageFile?: Express.Multer.File;
+  file?: Express.Multer.File;
 }
 
 export class UpdateProfileOutputDto extends PartialType(MyProfileOutputDTO) {}
