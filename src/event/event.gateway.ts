@@ -10,7 +10,6 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { ForbiddenException } from 'src/common/exceptions/service.exception';
 import { JwtService } from 'src/jwt/jwt.service';
 import { IPayload } from 'src/jwt/interfaces';
 import { TravelPost } from 'src/entities';
@@ -41,7 +40,7 @@ export class EventGateway
   @SubscribeMessage('setInit')
   handleSetInit(client: Socket) {
     try {
-      const token = client.handshake.headers.authorization;
+      const token = client.handshake.auth.Authorization;
       if (!token) {
         throw new Error();
       }
@@ -70,6 +69,9 @@ export class EventGateway
     @ConnectedSocket() client: Socket,
     @MessageBody('postId') postId,
   ) {
+    if (!client.data.user) {
+      client.emit('error', { message: 'Not found User' });
+    }
     return this.gatewayService.joinRoom(postId, client);
   }
 
