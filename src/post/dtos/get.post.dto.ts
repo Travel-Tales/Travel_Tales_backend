@@ -32,7 +32,7 @@ export class GetPostOutputDTO {
 
   @IsString()
   @ApiProperty({ description: '썸네일 이미지' })
-  thumnail: string;
+  thumbnail: string;
 
   @Type(() => Date)
   @IsDate()
