@@ -7,9 +7,11 @@ import {
   Post,
   UseGuards,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
-import { UpdateInputDto } from './dtos/update.dto';
+import { UpdatePostInputDto } from './dtos/update.post.dto';
 import { PostService } from './post.service';
 import {
   ApiTags,
@@ -18,6 +20,7 @@ import {
   ApiBody,
   ApiBearerAuth,
   ApiOkResponse,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
@@ -25,6 +28,7 @@ import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { TravelPost, User, UserTravelPost } from 'src/entities';
 import { GetPostOutputDTO } from './dtos/get.post.dto';
 import { PermissionInputDTO } from './dtos/permission.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('post')
 @ApiTags('Post')
@@ -78,22 +82,30 @@ export class PostController {
     return this.postService.createPost(userInfo, createInputDto);
   }
 
+  @ApiConsumes('multipart/form-data')
   @ApiOperation({
     summary: '게시물 수정 API',
     description: '게시물 수정',
   })
+  @ApiBody({ type: UpdatePostInputDto })
   @ApiBearerAuth('Authorization')
   @ApiParam({ name: 'id', type: Number })
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
+  @UseInterceptors(FileInterceptor('thumbnailFile'))
   @Patch(':id')
-  @ApiBody({ type: UpdateInputDto })
   async updatePost(
     @UserInfo() userInfo: User,
     @Param('id') id: number,
-    @Body() updateInputDto: UpdateInputDto,
+    @Body() updatePostInputDto: UpdatePostInputDto,
+    @UploadedFile() thumbnailFile: Express.Multer.File,
   ): Promise<void> {
-    return this.postService.updatePost(userInfo, id, updateInputDto);
+    return this.postService.updatePost(
+      userInfo,
+      id,
+      updatePostInputDto,
+      thumbnailFile,
+    );
   }
 
   @ApiOperation({

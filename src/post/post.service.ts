@@ -9,11 +9,12 @@ import {
 } from 'src/entities';
 import { Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
-import { UpdateInputDto } from './dtos/update.dto';
+import { UpdatePostInputDto } from './dtos/update.post.dto';
 import { ForbiddenException } from 'src/common/exceptions/service.exception';
 import { EventGateway } from 'src/event/event.gateway';
 import { PermissionInputDTO } from './dtos/permission.dto';
 import { MailService } from 'src/mail/mail.service';
+import { AwsService } from 'src/aws/aws.service';
 
 @Injectable()
 export class PostService {
@@ -26,6 +27,7 @@ export class PostService {
     private readonly InvitationRepository: Repository<InvitationVerification>,
     private readonly eventGateway: EventGateway,
     private readonly mailService: MailService,
+    private readonly awsService: AwsService,
   ) {}
 
   async getPost(id: number | undefined): Promise<TravelPost | TravelPost[]> {
@@ -63,18 +65,30 @@ export class PostService {
     return userTravelPost;
   }
 
-  async updatePost(user: User, id: number, updateInputDto: UpdateInputDto) {
+  async updatePost(
+    user: User,
+    id: number,
+    updateInputDto: UpdatePostInputDto,
+    thumbnailFile: Express.Multer.File,
+  ): Promise<void> {
     await this.getUserTravelPost(id, user.id);
+    const travelPost = (await this.getPost(id)) as TravelPost;
 
+    const travelPostInfo = {
+      id,
+      ...updateInputDto,
+    };
+
+    if (thumbnailFile) {
+      const thumbnail = await this.awsService.uploadPostImage(
+        thumbnailFile,
+        travelPost,
+      );
+      travelPostInfo['thumbnail'] = thumbnail;
+    }
     const [post] = this.travelPostRepository.create(
-      await this.travelPostRepository.save([
-        {
-          id,
-          ...updateInputDto,
-        },
-      ]),
+      await this.travelPostRepository.save([travelPostInfo]),
     );
-
     await this.eventGateway.notifyPostUpdate(String(id), post);
   }
 
