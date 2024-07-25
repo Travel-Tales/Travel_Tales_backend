@@ -1,11 +1,9 @@
 import {
   Controller,
   Get,
-  Post,
   UseGuards,
   UploadedFile,
   UseInterceptors,
-  BadRequestException,
   Patch,
   Body,
 } from '@nestjs/common';
@@ -47,54 +45,38 @@ export class UserController {
     return this.userService.getUserInfoByEmail(userInfo.email);
   }
 
-  @ApiOperation({
-    summary: '유저 프로필 업로드 API',
-    description: '유저 프로필 업로드',
-  })
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    required: true,
-    schema: {
-      type: 'object',
-      required: ['file'],
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
-  @Role(['Google', 'Kakao'])
-  @UseGuards(RoleGuard)
-  @ApiBearerAuth('Authorization')
-  @Post('profile/upload')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(
-    @UploadedFile() file: Express.Multer.File,
-    @UserInfo() userInfo: User,
-  ): Promise<void> {
-    if (!file) {
-      throw new BadRequestException('File is required and cannot be empty.');
-    }
-
-    return this.userService.uploadUserProfile(file, userInfo);
-  }
-
   @ApiOperation({
     summary: '유저 프로필 수정 API',
     description: '유저 프로필 수정',
   })
-  @ApiBody({ type: UpdateProfileInputDto })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'The file to upload',
+        },
+        nickname: {
+          type: 'string',
+          description: 'The nickname of the user',
+        },
+      },
+    },
+  })
   @ApiOkResponse({ type: UpdateProfileOutputDto })
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @ApiBearerAuth('Authorization')
+  @UseInterceptors(FileInterceptor('file'))
   @Patch('profile')
   async updateProfile(
     @UserInfo() user: User,
     @Body() updateProfileInputDto: UpdateProfileInputDto,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<UpdateProfileOutputDto> {
-    return this.userService.updateProfile(user, updateProfileInputDto);
+    return this.userService.updateProfile(user, updateProfileInputDto, file);
   }
 }

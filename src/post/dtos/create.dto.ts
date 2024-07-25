@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { TravelPost, VisibilityStatus } from 'src/entities';
 
@@ -26,7 +32,7 @@ export class CreateInputDto {
 
   @IsString()
   @ApiProperty({ description: '썸네일 이미지' })
-  thumnail: string;
+  thumbnail: string;
 
   @Type(() => Date)
   @IsDate()
