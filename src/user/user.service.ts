@@ -4,6 +4,10 @@ import { Repository } from 'typeorm';
 import { User, UserLoginType } from '../entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { AwsService } from 'src/aws/aws.service';
+import {
+  UpdateProfileInputDto,
+  UpdateProfileOutputDto,
+} from './dto/update.profile.dto';
 
 @Injectable()
 export class UserService {
@@ -39,5 +43,17 @@ export class UserService {
 
     const imageUrl = await this.awsService.uploadFile(file, user);
     await this.userRepository.save({ id: user.id, imageUrl });
+  }
+
+  async updateProfile(
+    user: User,
+    updateProfileInputDto: UpdateProfileInputDto,
+  ): Promise<UpdateProfileOutputDto> {
+    const profileInfo = { ...user, updateProfileInputDto };
+    const [profile] = await this.userRepository.create(
+      await this.userRepository.save([profileInfo]),
+    );
+
+    return profile;
   }
 }
