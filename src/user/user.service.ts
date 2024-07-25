@@ -39,10 +39,10 @@ export class UserService {
     updateProfileInputDto: UpdateProfileInputDto,
     file: Express.Multer.File,
   ): Promise<UpdateProfileOutputDto> {
-    let profileInfo = { ...user, ...updateProfileInputDto };
+    const profileInfo = { ...user, ...updateProfileInputDto };
     if (file) {
-      const imageUrl = await this.awsService.uploadFile(file, user);
-      profileInfo = { ...profileInfo, imageUrl };
+      const imageUrl = await this.awsService.uploadUserImage(file, user);
+      profileInfo['imageUrl'] = imageUrl;
     }
     return this.userRepository.create(
       await this.userRepository.save([profileInfo]),
