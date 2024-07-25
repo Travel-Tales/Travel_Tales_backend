@@ -2,6 +2,7 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { UserTravelPost } from './user_travel_post.entity';
+import { TravelPostImage } from './travel_post_image.entity';
 
 export enum VisibilityStatus {
   Public = 'Public',
@@ -14,7 +15,7 @@ export class TravelPost extends CoreEntity {
   @IsString()
   title: string;
 
-  @Column({ default: '' })
+  @Column({ type: 'text', default: '' })
   @IsString()
   content: string;
 
@@ -32,7 +33,7 @@ export class TravelPost extends CoreEntity {
 
   @Column({ default: '' })
   @IsString()
-  thumnail: string;
+  thumbnail: string;
 
   @Column({ default: new Date() })
   @IsDate()
@@ -54,4 +55,10 @@ export class TravelPost extends CoreEntity {
     },
   )
   userTravelPost: UserTravelPost[];
+
+  @OneToMany(
+    () => TravelPostImage,
+    (travelPostImage) => travelPostImage.travelPost,
+  )
+  travelPostImage: TravelPostImage[];
 }

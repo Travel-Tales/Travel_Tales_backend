@@ -9,6 +9,7 @@ import {
 } from 'src/entities';
 import { EventModule } from 'src/event/event.module';
 import { MailModule } from 'src/mail/mail.module';
+import { AwsModule } from 'src/aws/aws.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MailModule } from 'src/mail/mail.module';
     ]),
     EventModule,
     MailModule,
+    AwsModule,
   ],
   controllers: [PostController],
   providers: [PostService],
