@@ -5,6 +5,7 @@ import { User, UserLoginType } from 'src/entities';
 import { ITokens } from 'src/jwt/interfaces';
 import { ApiTags, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 import { UserInfo } from 'src/common/decorators/userInfo.decorator';
+import { Role } from 'src/common/decorators/role.decorator';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -63,8 +64,9 @@ export class AuthController {
     summary: '엑세스 토큰 재발급 API',
     description: '엑세스 토큰 재발급',
   })
-  @Post('refresh')
+  @Role(['Kakao', 'Google'])
   @UseGuards(AuthGuard('refresh'))
+  @Post('refresh')
   async updateAccessToken(
     @UserInfo() userInfo: User,
     @Res({ passthrough: true }) res,
@@ -77,5 +79,16 @@ export class AuthController {
     });
 
     return { access };
+  }
+
+  @ApiOperation({
+    summary: '로그아웃 API',
+    description: '로그아웃',
+  })
+  @Role(['Kakao', 'Google'])
+  @UseGuards(AuthGuard('refresh'))
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res): Promise<void> {
+    res.clearCookie('refresh');
   }
 }
