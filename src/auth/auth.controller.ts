@@ -6,6 +6,7 @@ import { ITokens } from 'src/jwt/interfaces';
 import { ApiTags, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { Role } from 'src/common/decorators/role.decorator';
+import { RefreshGuard } from 'src/common/guards/refresh.guard';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -64,8 +65,7 @@ export class AuthController {
     summary: '엑세스 토큰 재발급 API',
     description: '엑세스 토큰 재발급',
   })
-  @Role(['Kakao', 'Google'])
-  @UseGuards(AuthGuard('refresh'))
+  @UseGuards(RefreshGuard)
   @Post('refresh')
   async updateAccessToken(
     @UserInfo() userInfo: User,
