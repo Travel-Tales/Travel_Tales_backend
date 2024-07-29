@@ -27,7 +27,7 @@ export class RoleGuard implements CanActivate {
     const authorizationHeader = req.headers.authorization;
 
     if (!authorizationHeader) {
-      throw ForbiddenException('Authorization not found');
+      throw ForbiddenException();
     }
 
     const token = authorizationHeader.split(' ')[1];

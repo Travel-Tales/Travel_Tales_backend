@@ -29,6 +29,15 @@ export class JwtService {
     }
   }
 
+  verifyRefreshToken(token: string): IPayload {
+    try {
+      const decoded = jwt.verify(token, process.env.REFRESH_SECRET_KEY);
+      return this.createPayload(decoded);
+    } catch (e) {
+      this.thorwException(e);
+    }
+  }
+
   private createPayload(userInfo: User): IPayload {
     return {
       id: userInfo.id,
