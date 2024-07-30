@@ -6,6 +6,7 @@ import {
   TravelPost,
   UserTravelPost,
   InvitationVerification,
+  TravelPostImage,
 } from 'src/entities';
 import { EventModule } from 'src/event/event.module';
 import { MailModule } from 'src/mail/mail.module';
@@ -17,6 +18,7 @@ import { AwsModule } from 'src/aws/aws.module';
       TravelPost,
       UserTravelPost,
       InvitationVerification,
+      TravelPostImage,
     ]),
     EventModule,
     MailModule,

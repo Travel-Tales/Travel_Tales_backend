@@ -29,7 +29,7 @@ export class AwsService {
     const url: string = decodeURIComponent(imageUrl.split('images/')[1]);
 
     const params: IBucketOption = {
-      Bucket: 'traveltales/images',
+      Bucket: this.bucket,
       Key: url,
     };
 
@@ -64,5 +64,14 @@ export class AwsService {
     }
 
     return imageUrl;
+  }
+
+  public async uploadImageFile(
+    imageFile: Express.Multer.File,
+  ): Promise<string> {
+    this.bucket = 'traveltales/images';
+    this.key = imageFile.originalname;
+
+    return this.uploadFile(imageFile);
   }
 }

@@ -21,6 +21,7 @@ import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiConsumes,
+  ApiResponse,
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
@@ -29,6 +30,11 @@ import { TravelPost, User, UserTravelPost } from 'src/entities';
 import { GetPostOutputDTO } from './dtos/get.post.dto';
 import { PermissionInputDTO } from './dtos/permission.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  UploadImageInputDTO,
+  UploadImageOutputDTO,
+} from './dtos/uploadImage.dto';
+import { IDParamDTO } from 'src/common/dtos/id.param';
 
 @Controller('post')
 @ApiTags('Post')
@@ -96,13 +102,13 @@ export class PostController {
   @Patch(':id')
   async updatePost(
     @UserInfo() userInfo: User,
-    @Param('id') id: number,
+    @Param() params: IDParamDTO,
     @Body() updatePostInputDto: UpdatePostInputDto,
     @UploadedFile() thumbnailFile: Express.Multer.File,
   ): Promise<void> {
     return this.postService.updatePost(
       userInfo,
-      id,
+      params.id,
       updatePostInputDto,
       thumbnailFile,
     );
@@ -119,9 +125,9 @@ export class PostController {
   @Delete(':id')
   async deletePost(
     @UserInfo() userInfo: User,
-    @Param('id') id: number,
+    @Param() params: IDParamDTO,
   ): Promise<void> {
-    return this.postService.deletePost(userInfo, id);
+    return this.postService.deletePost(userInfo, params.id);
   }
 
   @ApiOperation({
@@ -136,9 +142,33 @@ export class PostController {
   @Post(':id/permission')
   async setPermission(
     @UserInfo() userInfo: User,
-    @Param('id') id: number,
+    @Param() params: IDParamDTO,
     @Body() permissionInputDTO: PermissionInputDTO,
   ): Promise<void> {
-    await this.postService.setPermission(userInfo, id, permissionInputDTO);
+    await this.postService.setPermission(
+      userInfo,
+      params.id,
+      permissionInputDTO,
+    );
+  }
+
+  @ApiOperation({
+    summary: '게시물 사진 업로드 API',
+    description: '게시물 사진 업로드',
+  })
+  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth('Authorization')
+  @ApiBody({ type: UploadImageInputDTO })
+  @ApiResponse({ type: UploadImageOutputDTO })
+  @ApiParam({ name: 'id', type: Number, required: false })
+  @UseInterceptors(FileInterceptor('imageFile'))
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
+  @Post(':id/upload-image')
+  async uploadPostImage(
+    @Param() params: IDParamDTO,
+    @UploadedFile() imageFile: Express.Multer.File,
+  ): Promise<string> {
+    return this.postService.uploadImageFile(params, imageFile);
   }
 }
