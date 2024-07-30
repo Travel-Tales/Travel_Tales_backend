@@ -6,6 +6,7 @@ import {
   VisibilityStatus,
   InvitationVerification,
   User,
+  TravelPostImage,
 } from 'src/entities';
 import { Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
@@ -24,7 +25,9 @@ export class PostService {
     @InjectRepository(UserTravelPost)
     private readonly userTravelPostRepository: Repository<UserTravelPost>,
     @InjectRepository(InvitationVerification)
-    private readonly InvitationRepository: Repository<InvitationVerification>,
+    private readonly invitationRepository: Repository<InvitationVerification>,
+    @InjectRepository(TravelPostImage)
+    private readonly travelPostImageRepository: Repository<TravelPostImage>,
     private readonly eventGateway: EventGateway,
     private readonly mailService: MailService,
     private readonly awsService: AwsService,
@@ -106,10 +109,10 @@ export class PostService {
     const { email } = permissionInputDTO;
 
     const invitation: InvitationVerification =
-      await this.InvitationRepository.create({ email, postId: id });
+      await this.invitationRepository.create({ email, postId: id });
     invitation.createCode();
 
-    await this.InvitationRepository.upsert(invitation, ['email', 'postId']);
+    await this.invitationRepository.upsert(invitation, ['email', 'postId']);
 
     const { title } = post.travelPost;
     await this.mailService.sendMail(user.nickname, email, title);
@@ -122,5 +125,18 @@ export class PostService {
       .select(['tp'])
       .where('utp.userId = :userId', { userId: userInfo.id })
       .getMany();
+  }
+
+  async uploadImageFile(
+    { id }: { id: number },
+    imageFile: Express.Multer.File,
+  ): Promise<string> {
+    const imageUrl: string = await this.awsService.uploadImageFile(imageFile);
+
+    await this.travelPostImageRepository.save(
+      this.travelPostImageRepository.create({ postId: id, imageUrl }),
+    );
+
+    return imageUrl;
   }
 }
