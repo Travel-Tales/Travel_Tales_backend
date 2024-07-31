@@ -17,7 +17,7 @@ async function bootstrap() {
 
   const corsOptions: CorsOptions = {
     origin: ['http://localhost:3000', 'http://localhost:3001'],
-    methods: 'GET,POST,PUT,PATCH',
+    methods: 'GET,POST,PUT,PATCH,DELETE',
     allowedHeaders: 'Origin,Content-Type,Authorization,Accept',
     credentials: true,
     maxAge: 81600,
