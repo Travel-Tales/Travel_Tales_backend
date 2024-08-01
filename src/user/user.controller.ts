@@ -50,22 +50,7 @@ export class UserController {
     summary: '유저 프로필 수정 API',
     description: '유저 프로필 수정',
   })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-          description: 'The file to upload',
-        },
-        nickname: {
-          type: 'string',
-          description: 'The nickname of the user',
-        },
-      },
-    },
-  })
+  @ApiBody({ type: UpdateProfileInputDto })
   @ApiOkResponse({ type: UpdateProfileOutputDto })
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)

@@ -85,8 +85,7 @@ export class AuthController {
     summary: '로그아웃 API',
     description: '로그아웃',
   })
-  @Role(['Kakao', 'Google'])
-  @UseGuards(AuthGuard('refresh'))
+  @UseGuards(RefreshGuard)
   @Post('logout')
   async logout(@Res({ passthrough: true }) res): Promise<void> {
     res.clearCookie('refresh');
