@@ -1,8 +1,9 @@
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { UserTravelPost } from './user_travel_post.entity';
 import { TravelPostImage } from './travel_post_image.entity';
+import { User } from './user.entity';
 
 export enum VisibilityStatus {
   Public = 'Public',
@@ -50,9 +51,6 @@ export class TravelPost extends CoreEntity {
   @OneToMany(
     () => UserTravelPost,
     (userTravelPost) => userTravelPost.travelPost,
-    {
-      onDelete: 'CASCADE',
-    },
   )
   userTravelPost: UserTravelPost[];
 

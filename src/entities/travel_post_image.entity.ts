@@ -9,9 +9,8 @@ export class TravelPostImage extends CoreEntity {
   @IsNumber()
   postId: number;
 
-  @Column()
-  @IsString()
-  imageUrl: string;
+  @Column('simple-array')
+  imageUrl: string[];
 
   @ManyToOne(() => TravelPost, (travelPost) => travelPost.travelPostImage)
   @JoinColumn({ name: 'postId' })
