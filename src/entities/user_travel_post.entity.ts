@@ -19,11 +19,13 @@ export class UserTravelPost {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.userTravelPost)
+  @ManyToOne(() => User, (user) => user.userTravelPost, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => TravelPost, (travelPost) => travelPost.userTravelPost)
+  @ManyToOne(() => TravelPost, (travelPost) => travelPost.userTravelPost, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'postId' })
   travelPost: TravelPost;
 }
