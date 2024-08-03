@@ -3,7 +3,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { User, UserLoginType } from 'src/entities';
 import { ITokens } from 'src/jwt/interfaces';
-import { ApiTags, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiCookieAuth,
+} from '@nestjs/swagger';
 import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RefreshGuard } from 'src/common/guards/refresh.guard';
@@ -61,6 +66,7 @@ export class AuthController {
     return res.status(200).redirect(process.env.REDIRECT_URL);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: '엑세스 토큰 재발급 API',
     description: '엑세스 토큰 재발급',
@@ -81,6 +87,7 @@ export class AuthController {
     return { access };
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: '로그아웃 API',
     description: '로그아웃',
