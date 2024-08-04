@@ -19,7 +19,9 @@ export class TravelPostImage extends CoreEntity {
   @Column('simple-array')
   imageUrl: string;
 
-  @OneToOne(() => TravelPost, (travelPost) => travelPost.travelPostImage)
+  @OneToOne(() => TravelPost, (travelPost) => travelPost.travelPostImage, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'postId' })
   travelPost: TravelPost;
 }
