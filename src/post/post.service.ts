@@ -133,8 +133,22 @@ export class PostService {
   ): Promise<string> {
     const imageUrl: string = await this.awsService.uploadImageFile(imageFile);
 
+    let postInfoImages: TravelPostImage | null =
+      await this.travelPostImageRepository.findOne({
+        where: { postId: id },
+      });
+
+    const imageUrls = JSON.stringify([
+      ...JSON.parse(postInfoImages?.imageUrl || '[]'),
+      imageUrl,
+    ]);
+
     await this.travelPostImageRepository.save(
-      this.travelPostImageRepository.create({ postId: id, imageUrl }),
+      this.travelPostImageRepository.create({
+        ...postInfoImages,
+        postId: id,
+        imageUrl: imageUrls,
+      }),
     );
 
     return imageUrl;
