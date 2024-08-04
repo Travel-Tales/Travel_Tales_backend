@@ -75,12 +75,18 @@ export class PostService {
     thumbnailFile: Express.Multer.File,
   ): Promise<void> {
     await this.getUserTravelPost(id, user.id);
-    const travelPost = (await this.getPost(id)) as TravelPost;
+
+    const [travelPost, travelPostImage] = await Promise.all([
+      (await this.getPost(id)) as TravelPost,
+      await this.getPostImageURL(id),
+    ]);
 
     const travelPostInfo = {
       id,
       ...updateInputDto,
     };
+
+    await this.savePostImage(id, travelPostImage, updateInputDto);
 
     if (thumbnailFile) {
       const thumbnail = await this.awsService.uploadPostImage(
@@ -133,24 +139,36 @@ export class PostService {
   ): Promise<string> {
     const imageUrl: string = await this.awsService.uploadImageFile(imageFile);
 
-    let postInfoImages: TravelPostImage | null =
-      await this.travelPostImageRepository.findOne({
-        where: { postId: id },
-      });
+    return imageUrl;
+  }
 
-    const imageUrls = JSON.stringify([
-      ...JSON.parse(postInfoImages?.imageUrl || '[]'),
-      imageUrl,
-    ]);
+  async getPostImageURL(id: number): Promise<TravelPostImage | null> {
+    return this.travelPostImageRepository.findOne({
+      where: { postId: id },
+    });
+  }
+
+  async savePostImage(
+    id: number,
+    travelPostImage: TravelPostImage,
+    updatePostInputDto: UpdatePostInputDto,
+  ) {
+    const parseImageUrls: string[] = JSON.parse(
+      updatePostInputDto?.imageUrls || '[]',
+    );
+
+    const removalList: string[] = JSON.parse(
+      travelPostImage?.imageUrl || '[]',
+    ).filter((ele) => !ele.includes(parseImageUrls));
+
+    await this.awsService.deleteImageFile(removalList);
 
     await this.travelPostImageRepository.save(
       this.travelPostImageRepository.create({
-        ...postInfoImages,
+        ...travelPostImage,
         postId: id,
-        imageUrl: imageUrls,
+        imageUrl: JSON.stringify(parseImageUrls),
       }),
     );
-
-    return imageUrl;
   }
 }

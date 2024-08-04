@@ -74,4 +74,10 @@ export class AwsService {
 
     return this.uploadFile(imageFile);
   }
+
+  public async deleteImageFile(removalList: string[]): Promise<void> {
+    this.bucket = 'traveltales/images';
+
+    await Promise.all(removalList.map((ele) => this.deleteFile(ele)));
+  }
 }
