@@ -1,10 +1,12 @@
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsDate,
   IsEnum,
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { VisibilityStatus } from 'src/entities';
@@ -35,6 +37,12 @@ export class UpdatePostInputDto {
   @IsOptional()
   @IsNumber()
   budget?: number;
+
+  @ApiProperty({ description: '이미지 URL들', required: false })
+  @IsOptional()
+  @IsString()
+  @Matches(/^\[\s*(.*)\s*\]$/)
+  imageUrls: string;
 
   @ApiProperty({
     description: '썸네일 이미지 파일, 선택적 필드',
