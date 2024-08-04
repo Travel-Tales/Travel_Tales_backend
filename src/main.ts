@@ -31,6 +31,7 @@ async function bootstrap() {
       { type: 'http', scheme: 'bearer', bearerFormat: 'Token' },
       'Authorization',
     )
+    .addCookieAuth('refresh')
     .setTitle('Travel Tales API')
     .setDescription('The Travel Tales API description')
     .setVersion('1.0')

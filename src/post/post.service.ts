@@ -35,7 +35,10 @@ export class PostService {
 
   async getPost(id: number | undefined): Promise<TravelPost | TravelPost[]> {
     const where = id ? { id } : { visibilityStatus: VisibilityStatus.Public };
-    return this.travelPostRepository.find({ where });
+    return this.travelPostRepository.find({
+      where,
+      relations: ['travelPostImage'],
+    });
   }
 
   async createPost(
@@ -75,12 +78,18 @@ export class PostService {
     thumbnailFile: Express.Multer.File,
   ): Promise<void> {
     await this.getUserTravelPost(id, user.id);
-    const travelPost = (await this.getPost(id)) as TravelPost;
+
+    const [travelPost, travelPostImage] = await Promise.all([
+      (await this.getPost(id)) as TravelPost,
+      await this.getPostImageURL(id),
+    ]);
 
     const travelPostInfo = {
       id,
       ...updateInputDto,
     };
+
+    await this.savePostImage(id, travelPostImage, updateInputDto);
 
     if (thumbnailFile) {
       const thumbnail = await this.awsService.uploadPostImage(
@@ -133,10 +142,36 @@ export class PostService {
   ): Promise<string> {
     const imageUrl: string = await this.awsService.uploadImageFile(imageFile);
 
-    await this.travelPostImageRepository.save(
-      this.travelPostImageRepository.create({ postId: id, imageUrl }),
+    return imageUrl;
+  }
+
+  async getPostImageURL(id: number): Promise<TravelPostImage | null> {
+    return this.travelPostImageRepository.findOne({
+      where: { postId: id },
+    });
+  }
+
+  async savePostImage(
+    id: number,
+    travelPostImage: TravelPostImage,
+    updatePostInputDto: UpdatePostInputDto,
+  ) {
+    const parseImageUrls: string[] = JSON.parse(
+      updatePostInputDto?.imageUrls || '[]',
     );
 
-    return imageUrl;
+    const removalList: string[] = JSON.parse(
+      travelPostImage?.imageUrl || '[]',
+    ).filter((ele) => !ele.includes(parseImageUrls));
+
+    await this.awsService.deleteImageFile(removalList);
+
+    await this.travelPostImageRepository.save(
+      this.travelPostImageRepository.create({
+        ...travelPostImage,
+        postId: id,
+        imageUrl: JSON.stringify(parseImageUrls),
+      }),
+    );
   }
 }
