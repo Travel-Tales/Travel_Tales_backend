@@ -35,7 +35,10 @@ export class PostService {
 
   async getPost(id: number | undefined): Promise<TravelPost | TravelPost[]> {
     const where = id ? { id } : { visibilityStatus: VisibilityStatus.Public };
-    return this.travelPostRepository.find({ where });
+    return this.travelPostRepository.find({
+      where,
+      relations: ['travelPostImage'],
+    });
   }
 
   async createPost(
