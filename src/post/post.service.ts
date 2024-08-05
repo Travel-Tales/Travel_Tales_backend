@@ -89,8 +89,6 @@ export class PostService {
       ...updateInputDto,
     };
 
-    await this.savePostImage(id, travelPostImage, updateInputDto);
-
     if (thumbnailFile) {
       const thumbnail = await this.awsService.uploadPostImage(
         thumbnailFile,
@@ -98,9 +96,14 @@ export class PostService {
       );
       travelPostInfo['thumbnail'] = thumbnail;
     }
-    const [post] = this.travelPostRepository.create(
-      await this.travelPostRepository.save([travelPostInfo]),
-    );
+
+    await Promise.all([
+      this.savePostImage(id, travelPostImage, updateInputDto),
+      this.travelPostRepository.save([travelPostInfo]),
+    ]);
+
+    const post: TravelPost = (await this.getPost(id)) as TravelPost;
+
     await this.eventGateway.notifyPostUpdate(String(id), post);
   }
 
