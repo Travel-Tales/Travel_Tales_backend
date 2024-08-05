@@ -136,10 +136,7 @@ export class PostService {
       .getMany();
   }
 
-  async uploadImageFile(
-    { id }: { id: number },
-    imageFile: Express.Multer.File,
-  ): Promise<string> {
+  async uploadImageFile(imageFile: Express.Multer.File): Promise<string> {
     const imageUrl: string = await this.awsService.uploadImageFile(imageFile);
 
     return imageUrl;
