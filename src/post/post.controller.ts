@@ -153,22 +153,20 @@ export class PostController {
   }
 
   @ApiOperation({
-    summary: '게시물 사진 업로드 API',
-    description: '게시물 사진 업로드',
+    summary: '게시물 사진 URL로 변경',
+    description: '게시물 사진 URL',
   })
   @ApiConsumes('multipart/form-data')
   @ApiBearerAuth('Authorization')
   @ApiBody({ type: UploadImageInputDTO })
   @ApiResponse({ type: UploadImageOutputDTO })
-  @ApiParam({ name: 'id', type: Number, required: false })
   @UseInterceptors(FileInterceptor('imageFile'))
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
-  @Post(':id/upload-image')
+  @Post('upload-image')
   async uploadPostImage(
-    @Param() params: IDParamDTO,
     @UploadedFile() imageFile: Express.Multer.File,
   ): Promise<string> {
-    return this.postService.uploadImageFile(params, imageFile);
+    return this.postService.uploadImageFile(imageFile);
   }
 }
