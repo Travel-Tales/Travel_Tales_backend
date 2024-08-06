@@ -134,7 +134,8 @@ export class PostService {
     return this.travelPostRepository
       .createQueryBuilder('tp')
       .innerJoinAndSelect('tp.userTravelPost', 'utp')
-      .select(['tp'])
+      .innerJoinAndSelect('tp.travelPostImage', 'tpi')
+      .select(['tp', 'tpi'])
       .where('utp.userId = :userId', { userId: userInfo.id })
       .getMany();
   }
