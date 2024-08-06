@@ -25,8 +25,9 @@ export class AwsService {
     return (await this.s3.upload(params).promise()).Location;
   }
 
-  private async deleteFile(imageUrl: string): Promise<void> {
-    const url: string = decodeURIComponent(imageUrl.split('images/')[1]);
+  private async deleteFile(imageUrl: string, splitKey: string): Promise<void> {
+    const url: string = decodeURIComponent(imageUrl.split(`${splitKey}/`)[1]);
+    console.log('🚀 ~ AwsService ~ deleteFile ~ url:', url);
 
     const params: IBucketOption = {
       Bucket: this.bucket,
@@ -37,13 +38,16 @@ export class AwsService {
   }
 
   public async uploadUserImage(file: Express.Multer.File, profile: User) {
+    console.log('🚀 ~ AwsService ~ uploadUserImage ~ profile:', profile);
     this.bucket = 'traveltales/profileImage';
     this.key = profile.email;
+
+    console.log(file);
 
     const imageUrl = await this.uploadFile(file);
 
     if (profile.imageUrl) {
-      await this.deleteFile(profile.imageUrl);
+      await this.deleteFile(profile.imageUrl, 'profileImage');
     }
 
     return imageUrl;
@@ -60,7 +64,7 @@ export class AwsService {
     const imageUrl = await this.uploadFile(file);
 
     if (travelPost.thumbnail) {
-      await this.deleteFile(travelPost.thumbnail);
+      await this.deleteFile(travelPost.thumbnail, 'thumbnail');
     }
 
     return imageUrl;
@@ -78,6 +82,6 @@ export class AwsService {
   public async deleteImageFile(removalList: string[]): Promise<void> {
     this.bucket = 'traveltales/images';
 
-    await Promise.all(removalList.map((ele) => this.deleteFile(ele)));
+    await Promise.all(removalList.map((ele) => this.deleteFile(ele, 'images')));
   }
 }
