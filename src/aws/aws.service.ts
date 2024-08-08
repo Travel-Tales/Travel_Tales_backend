@@ -41,7 +41,6 @@ export class AwsService {
     ProfileImage: Express.Multer.File,
     profile: User,
   ) {
-    console.log('🚀 ~ AwsService ~ uploadUserImage ~ profile:', profile);
     this.bucket = 'traveltales/profileImage';
     this.key = profile.email;
 
