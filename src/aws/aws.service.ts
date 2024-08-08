@@ -37,14 +37,17 @@ export class AwsService {
     await this.s3.deleteObject(params).promise();
   }
 
-  public async uploadUserImage(file: Express.Multer.File, profile: User) {
+  public async uploadUserImage(
+    ProfileImage: Express.Multer.File,
+    profile: User,
+  ) {
     console.log('🚀 ~ AwsService ~ uploadUserImage ~ profile:', profile);
     this.bucket = 'traveltales/profileImage';
     this.key = profile.email;
 
-    console.log(file);
+    console.log(ProfileImage);
 
-    const imageUrl = await this.uploadFile(file);
+    const imageUrl = await this.uploadFile(ProfileImage);
 
     if (profile.imageUrl) {
       await this.deleteFile(profile.imageUrl, 'profileImage');
