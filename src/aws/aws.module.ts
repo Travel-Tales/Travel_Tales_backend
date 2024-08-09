@@ -1,10 +1,13 @@
 // src/utils/aws-config.module.ts
 import { Module, Global } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
 import { AwsService } from './aws.service';
+import { TravelPostImage } from 'src/entities';
 
 @Global()
 @Module({
+  imports: [TypeOrmModule.forFeature([TravelPostImage])],
   providers: [
     {
       provide: 'AWS',
