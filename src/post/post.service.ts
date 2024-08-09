@@ -81,7 +81,7 @@ export class PostService {
 
     const [travelPost, travelPostImage] = await Promise.all([
       (await this.getPost(id)) as TravelPost,
-      await this.getPostImageURL(id),
+      await this.awsService.getPostImageURL(id),
     ]);
 
     const travelPostInfo = {
@@ -98,7 +98,7 @@ export class PostService {
     }
 
     await Promise.all([
-      this.savePostImage(id, travelPostImage, updateInputDto),
+      this.awsService.savePostImage(id, travelPostImage, updateInputDto),
       this.travelPostRepository.save([travelPostInfo]),
     ]);
 
@@ -147,35 +147,5 @@ export class PostService {
     const imageUrl: string = await this.awsService.uploadImageFile(imageFile);
 
     return imageUrl;
-  }
-
-  async getPostImageURL(id: number): Promise<TravelPostImage | null> {
-    return this.travelPostImageRepository.findOne({
-      where: { postId: id },
-    });
-  }
-
-  async savePostImage(
-    id: number,
-    travelPostImage: TravelPostImage,
-    updatePostInputDto: UpdatePostInputDto,
-  ) {
-    const parseImageUrls: string[] = JSON.parse(
-      updatePostInputDto?.imageUrls || '[]',
-    );
-
-    const removalList: string[] = JSON.parse(
-      travelPostImage?.imageUrl || '[]',
-    ).filter((ele) => !ele.includes(parseImageUrls));
-
-    await this.awsService.deleteImageFile(removalList);
-
-    await this.travelPostImageRepository.save(
-      this.travelPostImageRepository.create({
-        ...travelPostImage,
-        postId: id,
-        imageUrl: JSON.stringify(parseImageUrls),
-      }),
-    );
   }
 }

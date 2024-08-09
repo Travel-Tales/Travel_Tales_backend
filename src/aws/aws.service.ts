@@ -1,7 +1,10 @@
 // src/utils/aws.service.ts
 import { Injectable, Inject } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
-import { TravelPost, User } from 'src/entities';
+import { TravelPost, TravelPostImage, User } from 'src/entities';
+import { UpdatePostInputDto } from 'src/post/dtos/update.post.dto';
+import { Repository } from 'typeorm';
 import { IBucketOption } from './interfaces';
 
 @Injectable()
@@ -10,7 +13,11 @@ export class AwsService {
   private bucket: string;
   private key: string;
 
-  constructor(@Inject('AWS') private readonly aws: typeof AWS) {
+  constructor(
+    @InjectRepository(TravelPostImage)
+    private readonly travelPostImageRepository: Repository<TravelPostImage>,
+    @Inject('AWS') private readonly aws: typeof AWS,
+  ) {
     this.s3 = new this.aws.S3();
   }
 
@@ -85,5 +92,35 @@ export class AwsService {
     this.bucket = 'traveltales/images';
 
     await Promise.all(removalList.map((ele) => this.deleteFile(ele, 'images')));
+  }
+
+  async getPostImageURL(id: number): Promise<TravelPostImage | null> {
+    return this.travelPostImageRepository.findOne({
+      where: { postId: id },
+    });
+  }
+
+  async savePostImage(
+    id: number,
+    travelPostImage: TravelPostImage,
+    updatePostInputDto: UpdatePostInputDto,
+  ) {
+    const parseImageUrls: string[] = JSON.parse(
+      updatePostInputDto?.imageUrl || '[]',
+    );
+
+    const removalList: string[] = JSON.parse(
+      travelPostImage?.imageUrl || '[]',
+    ).filter((ele) => !ele.includes(parseImageUrls));
+
+    await this.deleteImageFile(removalList);
+
+    await this.travelPostImageRepository.save(
+      this.travelPostImageRepository.create({
+        ...travelPostImage,
+        postId: id,
+        imageUrl: JSON.stringify(parseImageUrls),
+      }),
+    );
   }
 }
