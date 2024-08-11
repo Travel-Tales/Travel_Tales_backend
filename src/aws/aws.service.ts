@@ -100,11 +100,8 @@ export class AwsService {
     });
   }
 
-  async savePostImage(
-    id: number,
-    travelPostImage: TravelPostImage,
-    updatePostInputDto: UpdatePostInputDto,
-  ) {
+  async savePostImage(id: number, updatePostInputDto: UpdatePostInputDto) {
+    const travelPostImage = await this.getPostImageURL(id);
     const parseImageUrls: string[] = JSON.parse(
       updatePostInputDto?.imageUrl || '[]',
     );
