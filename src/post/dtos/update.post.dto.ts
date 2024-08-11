@@ -42,7 +42,7 @@ export class UpdatePostInputDto {
   @IsOptional()
   @IsString()
   @Matches(/^\[\s*(.*)\s*\]$/)
-  imageUrls: string;
+  imageUrl: string;
 
   @ApiProperty({
     description: '썸네일 이미지 파일, 선택적 필드',

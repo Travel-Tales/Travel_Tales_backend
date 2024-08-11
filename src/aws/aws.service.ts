@@ -1,7 +1,10 @@
 // src/utils/aws.service.ts
 import { Injectable, Inject } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
-import { TravelPost, User } from 'src/entities';
+import { TravelPost, TravelPostImage, User } from 'src/entities';
+import { UpdatePostInputDto } from 'src/post/dtos/update.post.dto';
+import { Repository } from 'typeorm';
 import { IBucketOption } from './interfaces';
 
 @Injectable()
@@ -10,7 +13,11 @@ export class AwsService {
   private bucket: string;
   private key: string;
 
-  constructor(@Inject('AWS') private readonly aws: typeof AWS) {
+  constructor(
+    @InjectRepository(TravelPostImage)
+    private readonly travelPostImageRepository: Repository<TravelPostImage>,
+    @Inject('AWS') private readonly aws: typeof AWS,
+  ) {
     this.s3 = new this.aws.S3();
   }
 
@@ -25,8 +32,9 @@ export class AwsService {
     return (await this.s3.upload(params).promise()).Location;
   }
 
-  private async deleteFile(imageUrl: string): Promise<void> {
-    const url: string = decodeURIComponent(imageUrl.split('images/')[1]);
+  private async deleteFile(imageUrl: string, splitKey: string): Promise<void> {
+    const url: string = decodeURIComponent(imageUrl.split(`${splitKey}/`)[1]);
+    console.log('🚀 ~ AwsService ~ deleteFile ~ url:', url);
 
     const params: IBucketOption = {
       Bucket: this.bucket,
@@ -36,14 +44,19 @@ export class AwsService {
     await this.s3.deleteObject(params).promise();
   }
 
-  public async uploadUserImage(file: Express.Multer.File, profile: User) {
+  public async uploadUserImage(
+    ProfileImage: Express.Multer.File,
+    profile: User,
+  ) {
     this.bucket = 'traveltales/profileImage';
     this.key = profile.email;
 
-    const imageUrl = await this.uploadFile(file);
+    console.log(ProfileImage);
+
+    const imageUrl = await this.uploadFile(ProfileImage);
 
     if (profile.imageUrl) {
-      await this.deleteFile(profile.imageUrl);
+      await this.deleteFile(profile.imageUrl, 'profileImage');
     }
 
     return imageUrl;
@@ -60,7 +73,7 @@ export class AwsService {
     const imageUrl = await this.uploadFile(file);
 
     if (travelPost.thumbnail) {
-      await this.deleteFile(travelPost.thumbnail);
+      await this.deleteFile(travelPost.thumbnail, 'thumbnail');
     }
 
     return imageUrl;
@@ -78,6 +91,36 @@ export class AwsService {
   public async deleteImageFile(removalList: string[]): Promise<void> {
     this.bucket = 'traveltales/images';
 
-    await Promise.all(removalList.map((ele) => this.deleteFile(ele)));
+    await Promise.all(removalList.map((ele) => this.deleteFile(ele, 'images')));
+  }
+
+  async getPostImageURL(id: number): Promise<TravelPostImage | null> {
+    return this.travelPostImageRepository.findOne({
+      where: { postId: id },
+    });
+  }
+
+  async savePostImage(
+    id: number,
+    travelPostImage: TravelPostImage,
+    updatePostInputDto: UpdatePostInputDto,
+  ) {
+    const parseImageUrls: string[] = JSON.parse(
+      updatePostInputDto?.imageUrl || '[]',
+    );
+
+    const removalList: string[] = JSON.parse(
+      travelPostImage?.imageUrl || '[]',
+    ).filter((ele) => !ele.includes(parseImageUrls));
+
+    await this.deleteImageFile(removalList);
+
+    await this.travelPostImageRepository.save(
+      this.travelPostImageRepository.create({
+        ...travelPostImage,
+        postId: id,
+        imageUrl: JSON.stringify(parseImageUrls),
+      }),
+    );
   }
 }

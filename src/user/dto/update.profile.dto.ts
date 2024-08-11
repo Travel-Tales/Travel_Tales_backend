@@ -16,7 +16,7 @@ export class UpdateProfileInputDto {
     required: false,
   })
   @IsOptional()
-  file?: Express.Multer.File;
+  ProfileImage?: Express.Multer.File;
 }
 
 export class UpdateProfileOutputDto extends PartialType(MyProfileOutputDTO) {}
