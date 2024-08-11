@@ -79,10 +79,7 @@ export class PostService {
   ): Promise<void> {
     await this.getUserTravelPost(id, user.id);
 
-    const [travelPost, travelPostImage] = await Promise.all([
-      (await this.getPost(id)) as TravelPost,
-      await this.awsService.getPostImageURL(id),
-    ]);
+    const travelPost = (await this.getPost(id)) as TravelPost;
 
     const travelPostInfo = {
       id,
@@ -98,7 +95,7 @@ export class PostService {
     }
 
     await Promise.all([
-      this.awsService.savePostImage(id, travelPostImage, updateInputDto),
+      this.awsService.savePostImage(id, updateInputDto),
       this.travelPostRepository.save([travelPostInfo]),
     ]);
 
