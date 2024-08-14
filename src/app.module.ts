@@ -48,8 +48,8 @@ import { AwsModule } from './aws/aws.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      logging: process.env.NODE_ENV === 'dev' ? true : false,
-      synchronize: process.env.NODE_ENV === 'dev' ? true : false,
+      logging: process.env.NODE_ENV === 'prod' ? false : true,
+      synchronize: process.env.NODE_ENV === 'prod' ? false : true,
       entities: [
         User,
         UserTravelPost,
