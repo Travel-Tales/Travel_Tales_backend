@@ -16,7 +16,7 @@ async function bootstrap() {
   const PORT = process.env.PORT || 9502;
 
   const corsOptions: CorsOptions = {
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: ['http://localhost:3000', 'http://traveltales.kr'],
     methods: 'GET,POST,PUT,PATCH,DELETE',
     allowedHeaders: 'Origin,Content-Type,Authorization,Accept',
     credentials: true,
