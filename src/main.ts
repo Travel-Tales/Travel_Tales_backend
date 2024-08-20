@@ -16,7 +16,11 @@ async function bootstrap() {
   const PORT = process.env.PORT || 9502;
 
   const corsOptions: CorsOptions = {
-    origin: ['http://localhost:3000', 'http://www.traveltales.kr'],
+    origin: [
+      'http://localhost:3000',
+      'http://www.traveltales.kr',
+      'https://www.traveltales.kr',
+    ],
     methods: 'GET,POST,PUT,PATCH,DELETE',
     allowedHeaders: 'Origin,Content-Type,Authorization,Accept',
     credentials: true,
@@ -38,13 +42,15 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, document);
+  if (process.env.NODE_ENV !== 'PROD') {
+    SwaggerModule.setup('api-docs', app, document);
+  }
   app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      whitelist: true, // DTO에 정의되지 않은 프로퍼티들을 자동으로 제거
-      forbidNonWhitelisted: false, // 정의되지 않은 프로퍼티가 존재할 경우 에러 발생
+      whitelist: true,
+      forbidNonWhitelisted: false,
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
