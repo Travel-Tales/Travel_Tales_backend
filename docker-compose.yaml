@@ -37,9 +37,7 @@ services:
 
   nginx:
     container_name: web_server
-    build:
-      context: ./nginx
-      dockerfile: dockerfile
+    image: nginx:latest
     ports:
       - 80:80
     restart: always
