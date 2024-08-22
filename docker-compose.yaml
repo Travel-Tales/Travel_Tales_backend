@@ -8,7 +8,7 @@ services:
   app_web:
     container_name: web
     build:
-      context: ../Travel_Tales_frontend
+      context: ~/Travel_Tales_frontend
       dockerfile: dockerfile
     restart: always
     ports:
@@ -16,7 +16,7 @@ services:
     networks:
       - server-connection
     env_file:
-      - ../Travel_Tales_frontend/.env.local
+      - ~/Travel_Tales_frontend/.env.local
 
   app_server:
     container_name: was
