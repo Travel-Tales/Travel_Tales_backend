@@ -4,51 +4,51 @@ networks:
   server-connection:
     driver: bridge
 
-  services:
-    app_web:
-      container_name: web
-      build:
-        context: ../Travel_Tales_frontend
-        dockerfile: dockerfile
-      restart: always
-      ports:
-        - 3000:3000
-      networks:
-        - server-connection
-      env_file:
-        - ../Travel_Tales_frontend/.env.local
+services:
+  app_web:
+    container_name: web
+    build:
+      context: ../Travel_Tales_frontend
+      dockerfile: dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - server-connection
+    env_file:
+      - ../Travel_Tales_frontend/.env.local
 
-    app_server:
-      container_name: was
-      build:
-        context: .
-        dockerfile: dockerfile
-      restart: always
-      volumes:
-        - /var/log/traveltales_log:/app/log
-      ports:
-        - 9502:9502
-      networks:
-        - server-connection
-      env_file:
-        - ./.env.dev
-      depends_on:
-        - web
+  app_server:
+    container_name: was
+    build:
+      context: .
+      dockerfile: dockerfile
+    restart: always
+    volumes:
+      - /var/log/traveltales_log:/app/log
+    ports:
+      - 9502:9502
+    networks:
+      - server-connection
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - web
 
-    nginx:
-      container_name: web_server
-      build:
-        context: ./nginx
-        dockerfile: dockerfile
-      ports:
-        - 80:80
-      restart: always
-      volumes:
-        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-        - .var/log/nginx:/var/log/nginx
-      networks:
-        - server-connection
-      environment:
-        - TZ=Asia/Seoul
-      depends_on:
-        - app_server
+  nginx:
+    container_name: web_server
+    build:
+      context: ./nginx
+      dockerfile: dockerfile
+    ports:
+      - 80:80
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - .var/log/nginx:/var/log/nginx
+    networks:
+      - server-connection
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - app_server
