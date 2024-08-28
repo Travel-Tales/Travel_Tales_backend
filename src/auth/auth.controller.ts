@@ -29,7 +29,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   @Get('google/callback')
   @ApiExcludeEndpoint()
-  async googleAuthCallback(@UserInfo() userInfo: User, @Res() res) {
+  async googleAuthCallback(@UserInfo() userInfo: User, @Req() req, @Res() res) {
     const { refresh } = await this.authService.loginGoogle(
       userInfo,
       UserLoginType.Google,
@@ -39,7 +39,12 @@ export class AuthController {
       httpOnly: true,
     });
 
-    return res.status(200).redirect(process.env.REDIRECT_URL);
+    const redirectURL: string =
+      req.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : process.env.REDIRECT_URL;
+
+    return res.status(200).redirect(redirectURL);
   }
 
   @ApiOperation({
@@ -53,7 +58,7 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   @Get('kakao/callback')
   @ApiExcludeEndpoint()
-  async kakaoAuthCallback(@UserInfo() userInfo: User, @Res() res) {
+  async kakaoAuthCallback(@UserInfo() userInfo: User, @Req() req, @Res() res) {
     const { refresh } = await this.authService.loginKakao(
       userInfo,
       UserLoginType.Kakao,
@@ -63,7 +68,12 @@ export class AuthController {
       httpOnly: true,
     });
 
-    return res.status(200).redirect(process.env.REDIRECT_URL);
+    const redirectURL: string =
+      req.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : process.env.REDIRECT_URL;
+
+    return res.status(200).redirect(redirectURL);
   }
 
   @ApiCookieAuth()
