@@ -40,6 +40,7 @@ export class EventGateway
   @SubscribeMessage('setInit')
   handleSetInit(client: Socket) {
     try {
+      console.log(client);
       const token = client.handshake.auth.Authorization;
       if (!token) {
         throw new Error();
