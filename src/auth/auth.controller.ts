@@ -12,6 +12,8 @@ import {
 import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RefreshGuard } from 'src/common/guards/refresh.guard';
+import { Response } from 'express';
+import { ICookieOptions } from './interfaces';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -29,22 +31,15 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   @Get('google/callback')
   @ApiExcludeEndpoint()
-  async googleAuthCallback(@UserInfo() userInfo: User, @Req() req, @Res() res) {
+  async googleAuthCallback(@UserInfo() userInfo: User, @Res() res) {
     const { refresh } = await this.authService.loginGoogle(
       userInfo,
       UserLoginType.Google,
     );
 
-    res.cookie('refresh', refresh, {
-      httpOnly: true,
-    });
+    this.setCookie(res, 'refresh', refresh);
 
-    const redirectURL: string =
-      req.hostname === 'localhost'
-        ? 'http://localhost:3000'
-        : process.env.REDIRECT_URL;
-
-    return res.status(200).redirect(redirectURL);
+    return res.json();
   }
 
   @ApiOperation({
@@ -58,22 +53,15 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   @Get('kakao/callback')
   @ApiExcludeEndpoint()
-  async kakaoAuthCallback(@UserInfo() userInfo: User, @Req() req, @Res() res) {
+  async kakaoAuthCallback(@UserInfo() userInfo: User, @Res() res) {
     const { refresh } = await this.authService.loginKakao(
       userInfo,
       UserLoginType.Kakao,
     );
 
-    res.cookie('refresh', refresh, {
-      httpOnly: true,
-    });
+    this.setCookie(res, 'refresh', refresh);
 
-    const redirectURL: string =
-      req.hostname === 'localhost'
-        ? 'http://localhost:3000'
-        : process.env.REDIRECT_URL;
-
-    return res.status(200).redirect(redirectURL);
+    return res.json();
   }
 
   @ApiCookieAuth()
@@ -106,5 +94,18 @@ export class AuthController {
   @Post('logout')
   async logout(@Res({ passthrough: true }) res): Promise<void> {
     res.clearCookie('refresh');
+  }
+
+  setCookie(res: Response, cookieName: string, cookieValue) {
+    const cookieOption: ICookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'prod',
+      sameSite: 'strict',
+      domain:
+        process.env.NODE_ENV === 'prod' ? 'www.traveltales.kr' : 'localhost',
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+    };
+
+    return res.cookie(cookieName, cookieValue, cookieOption);
   }
 }

@@ -34,7 +34,6 @@ import { AwsModule } from './aws/aws.module';
         GOOGLE_SECRET_KEY: Joi.string().required(),
         SERVER_URL: Joi.string().required(),
         KAKAO_CLIENT_ID: Joi.string().required(),
-        REDIRECT_URL: Joi.string().required(),
         ACCESS_SECRET_KEY: Joi.string().required(),
         REFRESH_SECRET_KEY: Joi.string().required(),
         ACCESS_SECRET_EXPIRATION: Joi.string().required(),
