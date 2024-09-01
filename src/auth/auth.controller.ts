@@ -99,10 +99,9 @@ export class AuthController {
   setCookie(res: Response, cookieName: string, cookieValue) {
     const cookieOption: ICookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'prod',
+      secure: true,
       sameSite: 'strict',
-      domain:
-        process.env.NODE_ENV === 'prod' ? 'www.traveltales.kr' : 'localhost',
+      domain: 'www.traveltales.kr',
       maxAge: 3 * 24 * 60 * 60 * 1000,
     };
 
