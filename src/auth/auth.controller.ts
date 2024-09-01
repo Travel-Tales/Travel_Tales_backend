@@ -102,7 +102,7 @@ export class AuthController {
 
     const cookieOption: ICookieOptions = {
       httpOnly: true,
-      secure: true,
+      secure: domain === 'www.traveltales',
       sameSite: 'strict',
       domain,
       maxAge: 3 * 24 * 60 * 60 * 1000,
