@@ -38,8 +38,12 @@ export class AuthController {
     );
 
     this.setCookie(req, res, 'refresh', refresh);
+    const redirectURL: string =
+      req.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://www.traveltales.kr';
 
-    return res.json();
+    return res.status(200).redirect(redirectURL);
   }
 
   @ApiOperation({
@@ -60,8 +64,12 @@ export class AuthController {
     );
 
     this.setCookie(req, res, 'refresh', refresh);
+    const redirectURL: string =
+      req.hostname === 'localhost'
+        ? 'http://localhost:3000'
+        : 'https://www.traveltales.kr';
 
-    return res.json();
+    return res.status(200).redirect(redirectURL);
   }
 
   @ApiCookieAuth()
@@ -98,11 +106,11 @@ export class AuthController {
 
   setCookie(req: Request, res: Response, cookieName: string, cookieValue) {
     const domain: string =
-      req.hostname === 'localhost' ? 'localhost' : 'www.traveltales';
+      req.hostname === 'localhost' ? 'localhost' : 'www.traveltales.kr';
 
     const cookieOption: ICookieOptions = {
       httpOnly: true,
-      secure: domain === 'www.traveltales',
+      secure: domain === 'www.traveltales.kr',
       sameSite: 'strict',
       domain,
       maxAge: 3 * 24 * 60 * 60 * 1000,
