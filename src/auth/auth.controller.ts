@@ -12,7 +12,7 @@ import {
 import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RefreshGuard } from 'src/common/guards/refresh.guard';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { ICookieOptions } from './interfaces';
 
 @Controller('auth')
@@ -31,13 +31,13 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   @Get('google/callback')
   @ApiExcludeEndpoint()
-  async googleAuthCallback(@UserInfo() userInfo: User, @Res() res) {
+  async googleAuthCallback(@UserInfo() userInfo: User, @Req() req, @Res() res) {
     const { refresh } = await this.authService.loginGoogle(
       userInfo,
       UserLoginType.Google,
     );
 
-    this.setCookie(res, 'refresh', refresh);
+    this.setCookie(req, res, 'refresh', refresh);
 
     return res.json();
   }
@@ -53,13 +53,13 @@ export class AuthController {
   @UseGuards(AuthGuard('kakao'))
   @Get('kakao/callback')
   @ApiExcludeEndpoint()
-  async kakaoAuthCallback(@UserInfo() userInfo: User, @Res() res) {
+  async kakaoAuthCallback(@UserInfo() userInfo: User, @Req() req, @Res() res) {
     const { refresh } = await this.authService.loginKakao(
       userInfo,
       UserLoginType.Kakao,
     );
 
-    this.setCookie(res, 'refresh', refresh);
+    this.setCookie(req, res, 'refresh', refresh);
 
     return res.json();
   }
@@ -96,12 +96,15 @@ export class AuthController {
     res.clearCookie('refresh');
   }
 
-  setCookie(res: Response, cookieName: string, cookieValue) {
+  setCookie(req: Request, res: Response, cookieName: string, cookieValue) {
+    const domain: string =
+      req.hostname === 'localhost' ? 'localhost' : 'www.traveltales';
+
     const cookieOption: ICookieOptions = {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
-      domain: 'www.traveltales.kr',
+      domain,
       maxAge: 3 * 24 * 60 * 60 * 1000,
     };
 
