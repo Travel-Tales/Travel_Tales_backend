@@ -24,7 +24,7 @@ export class AwsService {
   private async uploadFile(file: Express.Multer.File): Promise<string> {
     const params: IBucketOption = {
       Bucket: this.bucket,
-      Key: `${new Date().toISOString()}_${this.key}_profile`,
+      Key: `${new Date().toISOString()}_${this.key}`,
       Body: file.buffer,
       ContentType: file.mimetype,
     };
@@ -34,7 +34,6 @@ export class AwsService {
 
   private async deleteFile(imageUrl: string, splitKey: string): Promise<void> {
     const url: string = decodeURIComponent(imageUrl.split(`${splitKey}/`)[1]);
-    console.log('🚀 ~ AwsService ~ deleteFile ~ url:', url);
 
     const params: IBucketOption = {
       Bucket: this.bucket,
@@ -50,8 +49,6 @@ export class AwsService {
   ) {
     this.bucket = 'traveltales/profileImage';
     this.key = profile.email;
-
-    console.log(ProfileImage);
 
     const imageUrl = await this.uploadFile(ProfileImage);
 
