@@ -55,17 +55,13 @@ export class UserController {
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @ApiBearerAuth('Authorization')
-  @UseInterceptors(FileInterceptor('ProfileImage'))
+  @UseInterceptors(FileInterceptor('file'))
   @Patch('profile')
   async updateProfile(
     @UserInfo() user: User,
     @Body() updateProfileInputDto: UpdateProfileInputDto,
-    @UploadedFile() ProfileImage: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<UpdateProfileOutputDto> {
-    return this.userService.updateProfile(
-      user,
-      updateProfileInputDto,
-      ProfileImage,
-    );
+    return this.userService.updateProfile(user, updateProfileInputDto, file);
   }
 }
