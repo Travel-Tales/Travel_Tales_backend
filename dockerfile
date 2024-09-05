@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci
+RUN npm ci --only=production
 
 COPY . .
 
@@ -19,7 +19,7 @@ ENV NODE_ENV=${NODE_ENV}
 
 COPY --from=build /app/dist ./dist
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --only=production
 
 EXPOSE 9502
 
