@@ -8,7 +8,7 @@ import {
   User,
   TravelPostImage,
 } from 'src/entities';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdatePostInputDto } from './dtos/update.post.dto';
 import { ForbiddenException } from 'src/common/exceptions/service.exception';
@@ -16,6 +16,7 @@ import { EventGateway } from 'src/event/event.gateway';
 import { PermissionInputDTO } from './dtos/permission.dto';
 import { MailService } from 'src/mail/mail.service';
 import { AwsService } from 'src/aws/aws.service';
+import { PostQueryStringDTO } from './dtos/get.query';
 
 @Injectable()
 export class PostService {
@@ -33,8 +34,16 @@ export class PostService {
     private readonly awsService: AwsService,
   ) {}
 
-  async getPost(id: number | undefined): Promise<TravelPost | TravelPost[]> {
+  async getPost(
+    id?: number,
+    query?: PostQueryStringDTO,
+  ): Promise<TravelPost | TravelPost[]> {
     const where = id ? { id } : { visibilityStatus: VisibilityStatus.Public };
+
+    Object.entries(query).forEach(([key, value]) => {
+      where[key] = Like(`%${value}%`);
+    });
+
     return this.travelPostRepository.find({
       where,
       relations: ['travelPostImage'],
