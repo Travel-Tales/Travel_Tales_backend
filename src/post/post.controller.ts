@@ -23,6 +23,7 @@ import {
   ApiOkResponse,
   ApiConsumes,
   ApiResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
@@ -36,6 +37,7 @@ import {
   UploadImageOutputDTO,
 } from './dtos/uploadImage.dto';
 import { IDParamDTO } from 'src/common/dtos/id.param';
+import { PostQueryStringDTO } from 'src/post/dtos/get.query';
 
 @Controller('post')
 @ApiTags('Post')
@@ -56,20 +58,28 @@ export class PostController {
   }
 
   @ApiOperation({
-    summary: '게시물 가져오기',
-    description: '게시물 가져오기',
-  })
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    required: false,
+    summary: '게시물 리스트 가져오기',
+    description: '게시물 리스트 가져오기',
   })
   @ApiOkResponse({ type: GetPostOutputDTO })
   @Role(['Any'])
   @UseGuards(RoleGuard)
-  @Get(':id?')
-  async getPost(
-    @Query() query: string,
+  @Get('')
+  async getPostList(
+    @Query() query: PostQueryStringDTO,
+  ): Promise<TravelPost | TravelPost[]> {
+    return this.postService.getPost(undefined, query);
+  }
+
+  @ApiOperation({
+    summary: '특정 게시물 가져오기',
+    description: '특정 게시물 가져오기',
+  })
+  @ApiOkResponse({ type: GetPostOutputDTO })
+  @Role(['Any'])
+  @UseGuards(RoleGuard)
+  @Get(':id')
+  async getPostById(
     @Param() params: IDParamDTO,
   ): Promise<TravelPost | TravelPost[]> {
     return this.postService.getPost(params.id);
@@ -97,7 +107,6 @@ export class PostController {
   })
   @ApiBody({ type: UpdatePostInputDto })
   @ApiBearerAuth('Authorization')
-  @ApiParam({ name: 'id', type: Number })
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @UseInterceptors(FileInterceptor('thumbnailFile'))
@@ -121,7 +130,6 @@ export class PostController {
     description: '게시물 삭제',
   })
   @ApiBearerAuth('Authorization')
-  @ApiParam({ name: 'id', type: Number })
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @Delete(':id')
@@ -138,7 +146,6 @@ export class PostController {
   })
   @ApiBearerAuth('Authorization')
   @ApiBody({ type: PermissionInputDTO })
-  @ApiParam({ name: 'id', type: Number })
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @Post(':id/permission')
