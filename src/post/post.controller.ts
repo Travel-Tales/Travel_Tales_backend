@@ -9,6 +9,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdatePostInputDto } from './dtos/update.post.dto';
@@ -68,9 +69,10 @@ export class PostController {
   @UseGuards(RoleGuard)
   @Get(':id?')
   async getPost(
-    @Param('id') id: number | undefined,
+    @Query() query: string,
+    @Param() params: IDParamDTO,
   ): Promise<TravelPost | TravelPost[]> {
-    return this.postService.getPost(id);
+    return this.postService.getPost(params.id);
   }
 
   @ApiOperation({
