@@ -40,9 +40,11 @@ export class PostService {
   ): Promise<TravelPost | TravelPost[]> {
     const where = id ? { id } : { visibilityStatus: VisibilityStatus.Public };
 
-    Object.entries(query).forEach(([key, value]) => {
-      where[key] = Like(`%${value}%`);
-    });
+    if (query) {
+      Object.entries(query).forEach(([key, value]) => {
+        where[key] = Like(`%${value}%`);
+      });
+    }
 
     return this.travelPostRepository.find({
       where,
