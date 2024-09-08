@@ -107,7 +107,9 @@ export class PostService {
 
     await Promise.all([
       this.awsService.savePostImage(id, updateInputDto),
-      this.travelPostRepository.save([travelPostInfo]),
+      this.travelPostRepository.save([
+        this.travelPostRepository.create(travelPostInfo),
+      ]),
     ]);
 
     const post: TravelPost = (await this.getPost(id)) as TravelPost;

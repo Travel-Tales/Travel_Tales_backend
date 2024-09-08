@@ -46,7 +46,13 @@ async function bootstrap() {
     SwaggerModule.setup('api-docs', app, document);
   }
   app.use(cookieParser());
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: false,
+    }),
+  );
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new APIInterceptor());
   await app.listen(PORT);
