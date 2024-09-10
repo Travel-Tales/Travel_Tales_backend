@@ -138,14 +138,26 @@ export class PostService {
     await this.mailService.sendMail(user.nickname, email, title);
   }
 
-  async getMyPost(userInfo: User): Promise<TravelPost[]> {
-    return this.travelPostRepository
+  async getMyPost(
+    userInfo: User,
+    query?: PostQueryStringDTO,
+  ): Promise<TravelPost[]> {
+    const travelPostList = await this.travelPostRepository
       .createQueryBuilder('tp')
       .innerJoinAndSelect('tp.userTravelPost', 'utp')
       .innerJoinAndSelect('tp.travelPostImage', 'tpi')
       .select(['tp', 'tpi'])
-      .where('utp.userId = :userId', { userId: userInfo.id })
-      .getMany();
+      .where('utp.userId = :userId', { userId: userInfo.id });
+
+    if (query) {
+      Object.entries(query).forEach(([key, value]) => {
+        travelPostList.andWhere(`tp.${key} LIKE :${key}`, {
+          [key]: `%${value}%`,
+        });
+      });
+    }
+    travelPostList.orderBy('tp.createdAt', 'ASC');
+    return travelPostList.getMany();
   }
 
   async uploadImageFile(imageFile: Express.Multer.File): Promise<string> {

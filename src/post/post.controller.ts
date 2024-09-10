@@ -53,8 +53,11 @@ export class PostController {
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @Get('/my-post')
-  async getMyPost(@UserInfo() userInfo: User): Promise<TravelPost[]> {
-    return this.postService.getMyPost(userInfo);
+  async getMyPost(
+    @UserInfo() userInfo: User,
+    @Query() query: PostQueryStringDTO,
+  ): Promise<TravelPost[]> {
+    return this.postService.getMyPost(userInfo, query);
   }
 
   @ApiOperation({
