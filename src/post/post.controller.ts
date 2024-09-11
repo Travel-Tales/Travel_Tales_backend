@@ -181,4 +181,9 @@ export class PostController {
   ): Promise<string> {
     return this.postService.uploadImageFile(imageFile);
   }
+
+  @Get('recommand')
+  async getRecommendPost() {
+    return this.postService.getRecommendPost();
+  }
 }
