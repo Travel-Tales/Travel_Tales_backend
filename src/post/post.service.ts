@@ -38,7 +38,11 @@ export class PostService {
     id?: number,
     query?: PostQueryStringDTO,
   ): Promise<TravelPost | TravelPost[]> {
-    const where = id ? { id } : { visibilityStatus: VisibilityStatus.Public };
+    const where = {};
+    if (id) {
+      where['id'] = id;
+    }
+    where['visibilityStatus'] = VisibilityStatus.Public;
 
     if (query) {
       Object.entries(query).forEach(([key, value]) => {
@@ -51,6 +55,8 @@ export class PostService {
       relations: ['travelPostImage'],
     });
   }
+
+  async getRecommendPost() {}
 
   async createPost(
     user,
