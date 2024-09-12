@@ -61,6 +61,18 @@ export class PostController {
   }
 
   @ApiOperation({
+    summary: '게시물 추천 리스트 가져오기',
+    description: '게시물 추천 리스트 가져오기',
+  })
+  @ApiOkResponse({ type: [GetPostOutputDTO] })
+  @Role(['Any'])
+  @UseGuards(RoleGuard)
+  @Get('recommand')
+  async getRecommendPost(): Promise<TravelPost[]> {
+    return this.postService.getRecommendPost();
+  }
+
+  @ApiOperation({
     summary: '게시물 리스트 가져오기',
     description: '게시물 리스트 가져오기',
   })
@@ -180,10 +192,5 @@ export class PostController {
     @UploadedFile() imageFile: Express.Multer.File,
   ): Promise<string> {
     return this.postService.uploadImageFile(imageFile);
-  }
-
-  @Get('recommand')
-  async getRecommendPost() {
-    return this.postService.getRecommendPost();
   }
 }

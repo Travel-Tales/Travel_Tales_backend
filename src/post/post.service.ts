@@ -56,7 +56,13 @@ export class PostService {
     });
   }
 
-  async getRecommendPost() {}
+  async getRecommendPost(): Promise<TravelPost[]> {
+    return this.travelPostRepository
+      .createQueryBuilder('tp')
+      .orderBy('RANDOM()')
+      .limit(8)
+      .getMany();
+  }
 
   async createPost(
     user,
