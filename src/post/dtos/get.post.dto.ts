@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsIn, IsNumber, IsString } from 'class-validator';
 import { CoreOutput } from 'src/common/dtos/core.output';
 import { VisibilityStatus } from 'src/entities';
 import { MyProfileOutputDTO } from 'src/user/dto/myprofile.dto';
@@ -44,7 +44,7 @@ export class GetPostOutputDTO {
   @ApiProperty({ description: '여행 마감 날짜' })
   endDate: Date;
 
-  @IsEnum(VisibilityStatus)
+  @IsIn(['Public', 'Private'])
   @ApiProperty({ description: '공개여부' })
   visibilityStatus: VisibilityStatus;
 

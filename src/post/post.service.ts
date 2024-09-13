@@ -37,12 +37,17 @@ export class PostService {
   async getPost(
     id?: number,
     query?: PostQueryStringDTO,
+    visibilityStatus?: VisibilityStatus,
   ): Promise<TravelPost | TravelPost[]> {
     const where = {};
+
     if (id) {
       where['id'] = id;
     }
-    where['visibilityStatus'] = VisibilityStatus.Public;
+
+    if (visibilityStatus) {
+      where['visibilityStatus'] = visibilityStatus;
+    }
 
     if (query) {
       Object.entries(query).forEach(([key, value]) => {
