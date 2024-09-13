@@ -11,7 +11,10 @@ import {
 import { Like, Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdatePostInputDto } from './dtos/update.post.dto';
-import { ForbiddenException } from 'src/common/exceptions/service.exception';
+import {
+  ForbiddenException,
+  NotFoundException,
+} from 'src/common/exceptions/service.exception';
 import { EventGateway } from 'src/event/event.gateway';
 import { PermissionInputDTO } from './dtos/permission.dto';
 import { MailService } from 'src/mail/mail.service';
@@ -61,9 +64,25 @@ export class PostService {
     });
   }
 
+  async getPostWithAccess(
+    id: number,
+    user?: User,
+  ): Promise<TravelPost | TravelPost[]> {
+    const post = await this.getPost(id);
+
+    if (!post) {
+      throw NotFoundException('Not found post');
+    }
+
+    await this.getUserTravelPost(id, user?.id);
+
+    return post;
+  }
+
   async getRecommendPost(): Promise<TravelPost[]> {
     return this.travelPostRepository
       .createQueryBuilder('tp')
+      .where(`tp.visibilityStatus = 'Public'`)
       .orderBy('RANDOM()')
       .limit(8)
       .getMany();
@@ -84,12 +103,18 @@ export class PostService {
     return travelPost;
   }
 
-  async getUserTravelPost(id: number, userId: number): Promise<UserTravelPost> {
+  async getUserTravelPost(
+    id: number,
+    userId?: number,
+  ): Promise<UserTravelPost> {
+    const where = {
+      travelPost: { id },
+    };
+    if (userId) {
+      where['user'] = { id: userId };
+    }
     const userTravelPost = await this.userTravelPostRepository.findOne({
-      where: {
-        user: { id: userId },
-        travelPost: { id },
-      },
+      where,
     });
 
     if (!userTravelPost) {
