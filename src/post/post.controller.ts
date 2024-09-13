@@ -23,7 +23,6 @@ import {
   ApiOkResponse,
   ApiConsumes,
   ApiResponse,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
@@ -83,7 +82,7 @@ export class PostController {
   async getPostList(
     @Query() query: PostQueryStringDTO,
   ): Promise<TravelPost | TravelPost[]> {
-    return this.postService.getPost(undefined, query);
+    return this.postService.getPost(undefined, query, 'Public');
   }
 
   @ApiOperation({
@@ -96,8 +95,9 @@ export class PostController {
   @Get(':id')
   async getPostById(
     @Param() params: IDParamDTO,
+    @UserInfo() userInfo?: User,
   ): Promise<TravelPost | TravelPost[]> {
-    return this.postService.getPost(params.id);
+    return this.postService.getPostWithAccess(params.id, userInfo);
   }
 
   @ApiOperation({
