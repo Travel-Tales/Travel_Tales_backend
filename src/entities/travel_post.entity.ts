@@ -5,10 +5,7 @@ import { UserTravelPost } from './user_travel_post.entity';
 import { TravelPostImage } from './travel_post_image.entity';
 import { User } from './user.entity';
 
-export enum VisibilityStatus {
-  Public = 'Public',
-  Private = 'Private',
-}
+export type VisibilityStatus = 'Public' | 'Private';
 
 @Entity()
 export class TravelPost extends CoreEntity {
@@ -44,7 +41,7 @@ export class TravelPost extends CoreEntity {
   @IsDate()
   endDate: Date;
 
-  @Column({ default: VisibilityStatus.Public })
+  @Column({ default: 'Public' })
   @IsString()
   visibilityStatus: VisibilityStatus;
 

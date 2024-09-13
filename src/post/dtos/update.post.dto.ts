@@ -3,6 +3,7 @@ import {
   IsArray,
   IsDate,
   IsEnum,
+  IsIn,
   IsNumber,
   IsOptional,
   IsString,
@@ -67,6 +68,6 @@ export class UpdatePostInputDto {
 
   @ApiProperty({ description: '공개여부', required: false })
   @IsOptional()
-  @IsEnum(VisibilityStatus)
+  @IsIn(['Public', 'Private'])
   visibilityStatus?: VisibilityStatus;
 }

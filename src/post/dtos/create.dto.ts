@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsDate,
   IsEnum,
+  IsIn,
   IsNumber,
   IsOptional,
   IsString,
@@ -44,7 +45,7 @@ export class CreateInputDto {
   @ApiProperty({ description: '여행 마감 날짜' })
   endDate: Date;
 
-  @IsEnum(VisibilityStatus)
+  @IsIn(['Public', 'Private'])
   @ApiProperty({ description: '공개여부' })
   visibilityStatus: VisibilityStatus;
 }
