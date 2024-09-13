@@ -53,8 +53,23 @@ export class PostController {
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @Get('/my-post')
-  async getMyPost(@UserInfo() userInfo: User): Promise<TravelPost[]> {
-    return this.postService.getMyPost(userInfo);
+  async getMyPost(
+    @UserInfo() userInfo: User,
+    @Query() query: PostQueryStringDTO,
+  ): Promise<TravelPost[]> {
+    return this.postService.getMyPost(userInfo, query);
+  }
+
+  @ApiOperation({
+    summary: '게시물 추천 리스트 가져오기',
+    description: '게시물 추천 리스트 가져오기',
+  })
+  @ApiOkResponse({ type: [GetPostOutputDTO] })
+  @Role(['Any'])
+  @UseGuards(RoleGuard)
+  @Get('recommand')
+  async getRecommendPost(): Promise<TravelPost[]> {
+    return this.postService.getRecommendPost();
   }
 
   @ApiOperation({
