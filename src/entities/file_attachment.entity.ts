@@ -6,7 +6,17 @@ import {
   IsUUID,
 } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { BeforeInsert, Column, Entity, Index, Unique } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  Unique,
+} from 'typeorm';
+import { TravelPost } from './travel_post.entity';
 
 @Entity()
 export class FileAttachment extends CoreEntity {
@@ -29,4 +39,9 @@ export class FileAttachment extends CoreEntity {
   @Column()
   @IsString()
   hashName: string;
+
+  @ManyToOne(() => TravelPost, (travelPost) => travelPost.fileAttachment, {
+    onDelete: 'CASCADE',
+  })
+  travelPost: TravelPost;
 }
