@@ -53,12 +53,6 @@ export class TravelPost extends CoreEntity {
   userTravelPost: UserTravelPost[];
 
   @OneToMany(
-    () => TravelPostImage,
-    (travelPostImage) => travelPostImage.travelPost,
-  )
-  travelPostImage: TravelPostImage[];
-
-  @OneToMany(
     () => FileAttachment,
     (fileAttachment) => fileAttachment.travelPost,
   )
