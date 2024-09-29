@@ -31,10 +31,7 @@ import { TravelPost, User, UserTravelPost } from 'src/entities';
 import { GetPostOutputDTO } from './dtos/get.post.dto';
 import { PermissionInputDTO } from './dtos/permission.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  UploadImageInputDTO,
-  UploadImageOutputDTO,
-} from './dtos/uploadImage.dto';
+import { UploadImageInputDTO, UploadImageOutputDTO } from './dtos/uploadImage.dto';
 import { IDParamDTO } from 'src/common/dtos/id.param';
 import { PostQueryStringDTO } from 'src/post/dtos/get.query';
 
@@ -52,10 +49,7 @@ export class PostController {
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @Get('/my-post')
-  async getMyPost(
-    @UserInfo() userInfo: User,
-    @Query() query: PostQueryStringDTO,
-  ): Promise<TravelPost[]> {
+  async getMyPost(@UserInfo() userInfo: User, @Query() query: PostQueryStringDTO): Promise<TravelPost[]> {
     return this.postService.getMyPost(userInfo, query);
   }
 
@@ -79,9 +73,7 @@ export class PostController {
   @Role(['Any'])
   @UseGuards(RoleGuard)
   @Get('')
-  async getPostList(
-    @Query() query: PostQueryStringDTO,
-  ): Promise<TravelPost | TravelPost[]> {
+  async getPostList(@Query() query: PostQueryStringDTO): Promise<TravelPost | TravelPost[]> {
     return this.postService.getPost(undefined, query, 'Public');
   }
 
@@ -93,10 +85,7 @@ export class PostController {
   @Role(['Any'])
   @UseGuards(RoleGuard)
   @Get(':id')
-  async getPostById(
-    @Param() params: IDParamDTO,
-    @UserInfo() userInfo?: User,
-  ): Promise<TravelPost | TravelPost[]> {
+  async getPostById(@Param() params: IDParamDTO, @UserInfo() userInfo?: User): Promise<TravelPost | TravelPost[]> {
     return this.postService.getPostWithAccess(params.id, userInfo);
   }
 
@@ -108,10 +97,7 @@ export class PostController {
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @Post()
-  async createPost(
-    @UserInfo() userInfo: User,
-    @Body() createInputDto: CreateInputDto,
-  ): Promise<CreateOutPutDto> {
+  async createPost(@UserInfo() userInfo: User, @Body() createInputDto: CreateInputDto): Promise<CreateOutPutDto> {
     return this.postService.createPost(userInfo, createInputDto);
   }
 
@@ -132,12 +118,7 @@ export class PostController {
     @Body() updatePostInputDto: UpdatePostInputDto,
     @UploadedFile() thumbnailFile: Express.Multer.File,
   ): Promise<void> {
-    return this.postService.updatePost(
-      userInfo,
-      params.id,
-      updatePostInputDto,
-      thumbnailFile,
-    );
+    return this.postService.updatePost(userInfo, params.id, updatePostInputDto, thumbnailFile);
   }
 
   @ApiOperation({
@@ -148,10 +129,7 @@ export class PostController {
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @Delete(':id')
-  async deletePost(
-    @UserInfo() userInfo: User,
-    @Param() params: IDParamDTO,
-  ): Promise<void> {
+  async deletePost(@UserInfo() userInfo: User, @Param() params: IDParamDTO): Promise<void> {
     return this.postService.deletePost(userInfo, params.id);
   }
 
@@ -169,11 +147,7 @@ export class PostController {
     @Param() params: IDParamDTO,
     @Body() permissionInputDTO: PermissionInputDTO,
   ): Promise<void> {
-    await this.postService.setPermission(
-      userInfo,
-      params.id,
-      permissionInputDTO,
-    );
+    await this.postService.setPermission(userInfo, params.id, permissionInputDTO);
   }
 
   @ApiOperation({
@@ -187,10 +161,8 @@ export class PostController {
   @UseInterceptors(FileInterceptor('imageFile'))
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
-  @Post('upload-image')
-  async uploadPostImage(
-    @UploadedFile() imageFile: Express.Multer.File,
-  ): Promise<string> {
-    return this.postService.uploadImageFile(imageFile);
+  @Post('upload-image/:id')
+  async uploadPostImage(@Param() params: IDParamDTO, @UploadedFile() imageFile: Express.Multer.File): Promise<string> {
+    return this.postService.uploadImageFile(params.id, imageFile);
   }
 }

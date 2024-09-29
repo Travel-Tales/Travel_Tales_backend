@@ -2,8 +2,8 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { UserTravelPost } from './user_travel_post.entity';
-import { TravelPostImage } from './travel_post_image.entity';
-import { User } from './user.entity';
+import { FileAttachment } from './file_attachment.entity';
+import { Transform } from 'class-transformer';
 
 export type VisibilityStatus = 'Public' | 'Private';
 
@@ -26,8 +26,9 @@ export class TravelPost extends CoreEntity {
   travelerCount: number;
 
   @Column({ default: 0 })
-  @IsNumber()
-  budget: number;
+  @IsString()
+  @Transform(({ value }) => String(value))
+  budget: string;
 
   @Column({ default: '' })
   @IsString()
@@ -45,15 +46,9 @@ export class TravelPost extends CoreEntity {
   @IsString()
   visibilityStatus: VisibilityStatus;
 
-  @OneToMany(
-    () => UserTravelPost,
-    (userTravelPost) => userTravelPost.travelPost,
-  )
+  @OneToMany(() => UserTravelPost, (userTravelPost) => userTravelPost.travelPost)
   userTravelPost: UserTravelPost[];
 
-  @OneToMany(
-    () => TravelPostImage,
-    (travelPostImage) => travelPostImage.travelPost,
-  )
-  travelPostImage: TravelPostImage[];
+  @OneToMany(() => FileAttachment, (fileAttachment) => fileAttachment.id)
+  fileAttachment: FileAttachment[];
 }
