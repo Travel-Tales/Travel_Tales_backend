@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsDate, IsEnum, IsIn, IsNumber, IsString } from 'class-validator';
 import { CoreOutput } from 'src/common/dtos/core.output';
 import { VisibilityStatus } from 'src/entities';
@@ -26,9 +26,10 @@ export class GetPostOutputDTO {
   @ApiProperty({ description: '여행자 수' })
   travelerCount: number;
 
-  @IsNumber()
+  @IsString()
   @ApiProperty({ description: '예산' })
-  budget: number;
+  @Transform(({ value }) => String(value))
+  budget: string;
 
   @IsString()
   @ApiProperty({ description: '썸네일 이미지' })

@@ -1,12 +1,5 @@
-import { Type } from 'class-transformer';
-import {
-  IsDate,
-  IsEnum,
-  IsIn,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsDate, IsEnum, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { TravelPost, VisibilityStatus } from 'src/entities';
 
@@ -27,9 +20,10 @@ export class CreateInputDto {
   @ApiProperty({ description: '여행자 수' })
   travelerCount: number;
 
-  @IsNumber()
+  @IsString()
   @ApiProperty({ description: '예산' })
-  budget: number;
+  @Transform(({ value }) => String(value))
+  budget: string;
 
   @IsString()
   @ApiProperty({ description: '썸네일 이미지' })

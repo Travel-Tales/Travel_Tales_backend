@@ -35,5 +35,5 @@ export class FileAttachment extends CoreEntity {
 
   @Column()
   @IsNumber()
-  id: number;
+  tableId: number;
 }

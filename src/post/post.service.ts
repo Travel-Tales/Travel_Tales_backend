@@ -6,15 +6,12 @@ import {
   VisibilityStatus,
   InvitationVerification,
   User,
-  TravelPostImage,
+  FileAttachment,
 } from 'src/entities';
 import { Like, Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdatePostInputDto } from './dtos/update.post.dto';
-import {
-  ForbiddenException,
-  NotFoundException,
-} from 'src/common/exceptions/service.exception';
+import { ForbiddenException, NotFoundException } from 'src/common/exceptions/service.exception';
 import { EventGateway } from 'src/event/event.gateway';
 import { PermissionInputDTO } from './dtos/permission.dto';
 import { MailService } from 'src/mail/mail.service';
@@ -30,8 +27,8 @@ export class PostService {
     private readonly userTravelPostRepository: Repository<UserTravelPost>,
     @InjectRepository(InvitationVerification)
     private readonly invitationRepository: Repository<InvitationVerification>,
-    @InjectRepository(TravelPostImage)
-    private readonly travelPostImageRepository: Repository<TravelPostImage>,
+    @InjectRepository(FileAttachment)
+    private readonly fileAttchmentRepository: Repository<FileAttachment>,
     private readonly eventGateway: EventGateway,
     private readonly mailService: MailService,
     private readonly awsService: AwsService,
@@ -60,14 +57,10 @@ export class PostService {
 
     return this.travelPostRepository.find({
       where,
-      relations: ['travelPostImage'],
     });
   }
 
-  async getPostWithAccess(
-    id: number,
-    user?: User,
-  ): Promise<TravelPost | TravelPost[]> {
+  async getPostWithAccess(id: number, user?: User): Promise<TravelPost | TravelPost[]> {
     const post = await this.getPost(id);
 
     if (!post) {
@@ -88,25 +81,17 @@ export class PostService {
       .getMany();
   }
 
-  async createPost(
-    user,
-    createInputDto: CreateInputDto,
-  ): Promise<CreateOutPutDto> {
+  async createPost(user, createInputDto: CreateInputDto): Promise<CreateOutPutDto> {
     const travelPost: TravelPost = await this.travelPostRepository.save(
       this.travelPostRepository.create(createInputDto),
     );
 
-    await this.userTravelPostRepository.save(
-      this.userTravelPostRepository.create({ travelPost, user }),
-    );
+    await this.userTravelPostRepository.save(this.userTravelPostRepository.create({ travelPost, user }));
 
     return travelPost;
   }
 
-  async getUserTravelPost(
-    id: number,
-    userId?: number,
-  ): Promise<UserTravelPost> {
+  async getUserTravelPost(id: number, userId?: number): Promise<UserTravelPost> {
     const where = {
       travelPost: { id },
     };
@@ -140,18 +125,13 @@ export class PostService {
     };
 
     if (thumbnailFile) {
-      const thumbnail = await this.awsService.uploadPostImage(
-        thumbnailFile,
-        travelPost,
-      );
+      const thumbnail = await this.awsService.uploadPostImage(thumbnailFile, travelPost);
       travelPostInfo['thumbnail'] = thumbnail;
     }
 
     await Promise.all([
       this.awsService.savePostImage(id, updateInputDto),
-      this.travelPostRepository.save([
-        this.travelPostRepository.create(travelPostInfo),
-      ]),
+      this.travelPostRepository.save([this.travelPostRepository.create(travelPostInfo)]),
     ]);
 
     const post: TravelPost = (await this.getPost(id)) as TravelPost;
@@ -161,19 +141,15 @@ export class PostService {
 
   async deletePost(user: User, id: number): Promise<void> {
     await this.getUserTravelPost(id, user.id);
+    await this.fileAttchmentRepository.delete({ tableId: id });
     await this.travelPostRepository.delete({ id });
   }
 
-  async setPermission(
-    user: User,
-    id: number,
-    permissionInputDTO: PermissionInputDTO,
-  ) {
+  async setPermission(user: User, id: number, permissionInputDTO: PermissionInputDTO) {
     const post = await this.getUserTravelPost(id, user.id);
     const { email } = permissionInputDTO;
 
-    const invitation: InvitationVerification =
-      await this.invitationRepository.create({ email, postId: id });
+    const invitation: InvitationVerification = await this.invitationRepository.create({ email, postId: id });
     invitation.createCode();
 
     await this.invitationRepository.upsert(invitation, ['email', 'postId']);
@@ -182,15 +158,11 @@ export class PostService {
     await this.mailService.sendMail(user.nickname, email, title);
   }
 
-  async getMyPost(
-    userInfo: User,
-    query?: PostQueryStringDTO,
-  ): Promise<TravelPost[]> {
+  async getMyPost(userInfo: User, query?: PostQueryStringDTO): Promise<TravelPost[]> {
     const travelPostList = await this.travelPostRepository
       .createQueryBuilder('tp')
       .innerJoinAndSelect('tp.userTravelPost', 'utp')
-      .innerJoinAndSelect('tp.travelPostImage', 'tpi')
-      .select(['tp', 'tpi'])
+      .select(['tp'])
       .where('utp.userId = :userId', { userId: userInfo.id });
 
     if (query) {
@@ -204,9 +176,10 @@ export class PostService {
     return travelPostList.getMany();
   }
 
-  async uploadImageFile(imageFile: Express.Multer.File): Promise<string> {
-    const imageUrl: string = await this.awsService.uploadImageFile(imageFile);
+  async uploadImageFile(id: number, imageFile: Express.Multer.File): Promise<string> {
+    const fileType = 'postImage';
+    const S3FileInfo: FileAttachment = await this.awsService.uploadImageFile(id, imageFile, fileType);
 
-    return imageUrl;
+    return S3FileInfo.url;
   }
 }

@@ -3,11 +3,11 @@ import { Module, Global } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
 import { AwsService } from './aws.service';
-import { TravelPostImage } from 'src/entities';
+import { FileAttachment } from 'src/entities';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([TravelPostImage])],
+  imports: [TypeOrmModule.forFeature([FileAttachment])],
   providers: [
     {
       provide: 'AWS',

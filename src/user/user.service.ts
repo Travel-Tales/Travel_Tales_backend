@@ -4,10 +4,7 @@ import { Repository } from 'typeorm';
 import { User, UserLoginType } from '../entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { AwsService } from 'src/aws/aws.service';
-import {
-  UpdateProfileInputDto,
-  UpdateProfileOutputDto,
-} from './dto/update.profile.dto';
+import { UpdateProfileInputDto, UpdateProfileOutputDto } from './dto/update.profile.dto';
 
 @Injectable()
 export class UserService {
@@ -25,9 +22,7 @@ export class UserService {
 
   async createUserInfo(email: string, loginType: UserLoginType): Promise<User> {
     const nickname = email.split('@')[0];
-    return await this.userRepository.save(
-      this.userRepository.create({ email, loginType, nickname }),
-    );
+    return await this.userRepository.save(this.userRepository.create({ email, loginType, nickname }));
   }
 
   async getUserInfo(id: number): Promise<User> {
@@ -40,15 +35,11 @@ export class UserService {
     ProfileImage: Express.Multer.File,
   ): Promise<UpdateProfileOutputDto> {
     const profileInfo = { ...user, ...updateProfileInputDto };
+
     if (ProfileImage) {
-      const imageUrl = await this.awsService.uploadUserImage(
-        ProfileImage,
-        user,
-      );
-      profileInfo['imageUrl'] = imageUrl;
+      const fileInfo = await this.awsService.uploadUserImage(ProfileImage, user);
+      profileInfo['imageUrl'] = fileInfo;
     }
-    return this.userRepository.create(
-      await this.userRepository.save([profileInfo]),
-    )[0];
+    return this.userRepository.create(await this.userRepository.save([profileInfo]))[0];
   }
 }

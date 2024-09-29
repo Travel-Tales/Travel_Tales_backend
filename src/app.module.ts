@@ -7,7 +7,6 @@ import {
   UserTravelPost,
   TravelPost,
   InvitationVerification,
-  TravelPostImage,
   FileAttachment,
 } from './entities';
 import { AuthModule } from './auth/auth.module';
@@ -55,7 +54,6 @@ import { AwsModule } from './aws/aws.module';
         UserTravelPost,
         TravelPost,
         InvitationVerification,
-        TravelPostImage,
         FileAttachment,
       ],
       extra: {
