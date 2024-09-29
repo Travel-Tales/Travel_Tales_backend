@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { UserTravelPost } from './user_travel_post.entity';
 import { FileAttachment } from './file_attachment.entity';
+import { Transform } from 'class-transformer';
 
 export type VisibilityStatus = 'Public' | 'Private';
 
@@ -26,6 +27,7 @@ export class TravelPost extends CoreEntity {
 
   @Column({ default: 0 })
   @IsString()
+  @Transform(({ value }) => String(value))
   budget: string;
 
   @Column({ default: '' })

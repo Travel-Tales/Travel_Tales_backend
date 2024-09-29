@@ -1,14 +1,5 @@
-import { Type } from 'class-transformer';
-import {
-  IsArray,
-  IsDate,
-  IsEnum,
-  IsIn,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Matches,
-} from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsDate, IsEnum, IsIn, IsNumber, IsOptional, IsString, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { VisibilityStatus } from 'src/entities';
 export class UpdatePostInputDto {
@@ -34,10 +25,10 @@ export class UpdatePostInputDto {
   travelerCount?: number;
 
   @ApiProperty({ description: '예산', required: false })
-  @Type(() => Number)
   @IsOptional()
-  @IsNumber()
-  budget?: number;
+  @Transform(({ value }) => String(value))
+  @IsString()
+  budget?: string;
 
   @ApiProperty({ description: '이미지 URL들', required: false })
   @IsOptional()
