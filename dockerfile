@@ -3,11 +3,9 @@ FROM node:18.17.1-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-
-RUN npm ci --only=production
+RUN npm install   # 모든 의존성 설치
 
 COPY . .
-
 RUN npm run build
 
 FROM node:18.17.1-alpine
@@ -19,8 +17,8 @@ ENV NODE_ENV=${NODE_ENV}
 
 COPY --from=build /app/dist ./dist
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --only=production  
 
 EXPOSE 9502
 
-CMD [ "node", "dist/main.js" ]
+CMD [ "node", "dist/main.js" ] 
