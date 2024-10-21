@@ -5,6 +5,10 @@ import { TravelPost } from './travel_post.entity';
 
 @Entity()
 export class TravelReview extends CoreEntity {
+  @Column()
+  @IsString()
+  title: string;
+
   @Column({ type: 'text', default: '' })
   @IsString()
   content: string;
