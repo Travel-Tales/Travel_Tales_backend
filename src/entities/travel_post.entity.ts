@@ -4,10 +4,7 @@ import { IsDate, IsNumber, IsString } from 'class-validator';
 import { UserTravelPost } from './user_travel_post.entity';
 import { FileAttachment } from './file_attachment.entity';
 import { Transform } from 'class-transformer';
-<<<<<<< HEAD
 import { TravelReview } from './travel_review.entity';
-=======
->>>>>>> 30638f9c1d9fbfea4aa018c96ec75f71f35e6d62
 
 export type VisibilityStatus = 'Public' | 'Private';
 
@@ -55,10 +52,7 @@ export class TravelPost extends CoreEntity {
 
   @OneToMany(() => FileAttachment, (fileAttachment) => fileAttachment.id)
   fileAttachment: FileAttachment[];
-<<<<<<< HEAD
 
   @OneToMany(() => TravelReview, (travelReview) => travelReview.id)
   travelReview: TravelReview[];
-=======
->>>>>>> 30638f9c1d9fbfea4aa018c96ec75f71f35e6d62
 }
