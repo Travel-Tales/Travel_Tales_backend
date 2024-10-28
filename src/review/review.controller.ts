@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/common/decorators/role.decorator';
@@ -28,7 +28,11 @@ export class ReviewController {
   @UseGuards(RoleGuard)
   @UseInterceptors(FileInterceptor('thumbnailFile'))
   @Post('/')
-  async createReview(@UserInfo() userInfo, createInputDto: CreateInputDto): Promise<void> {
-    return this.reviewService.createReview(userInfo, createInputDto);
+  async createReview(
+    @UserInfo() userInfo,
+    @UploadedFile() thumbnailFile: Express.Multer.File,
+    @Body() createInputDto: CreateInputDto,
+  ): Promise<void> {
+    return this.reviewService.createReview(userInfo, createInputDto, thumbnailFile);
   }
 }

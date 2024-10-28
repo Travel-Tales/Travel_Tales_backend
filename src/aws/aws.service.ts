@@ -8,6 +8,7 @@ import { IBucketOption } from './interfaces';
 import { FileAttachment } from 'src/entities';
 import { Repository, Equal } from 'typeorm';
 import * as crypto from 'crypto';
+import { TravelReview } from 'src/entities/travel_review.entity';
 
 @Injectable()
 export class AwsService {
@@ -82,6 +83,18 @@ export class AwsService {
     }
 
     return fileInfo.url;
+  }
+
+  public async uploadReviewImage(file: Express.Multer.File, travelReview: TravelReview): Promise<string> {
+    const bucket = 'traveltales/thumbnail';
+    const fileType = 'thumbnail';
+    const { url } = await this.uploadFile(bucket, file);
+
+    if (travelReview.thumbnail) {
+      await this.deleteFile(bucket, travelReview.thumbnail, fileType);
+    }
+
+    return url;
   }
 
   public async uploadPostImage(file: Express.Multer.File, travelPost: TravelPost): Promise<string> {

@@ -1,10 +1,12 @@
 import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { TravelReview } from 'src/entities/travel_review.entity';
+import { Type } from 'class-transformer';
 
 export class CreateInputDto {
   @IsNumber()
   @ApiProperty({ description: '게시물 ID' })
+  @Type(() => Number)
   travelPostId: number;
 
   @IsString()
