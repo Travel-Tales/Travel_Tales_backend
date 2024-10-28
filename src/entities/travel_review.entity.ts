@@ -17,6 +17,6 @@ export class TravelReview extends CoreEntity {
   @IsString()
   thumbnail: string;
 
-  @ManyToOne(() => TravelPost, (travelPost) => travelPost.id)
-  travelReview: TravelPost;
+  @ManyToOne(() => TravelPost, (travelPost) => travelPost.travelReview, { eager: true, nullable: false })
+  travelPost: TravelPost;
 }

@@ -35,11 +35,11 @@ export class TravelPost extends CoreEntity {
   @IsString()
   thumbnail: string;
 
-  @Column({ default: new Date() })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @IsDate()
   startDate: Date;
 
-  @Column({ default: new Date() })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @IsDate()
   endDate: Date;
 
@@ -53,6 +53,6 @@ export class TravelPost extends CoreEntity {
   @OneToMany(() => FileAttachment, (fileAttachment) => fileAttachment.id)
   fileAttachment: FileAttachment[];
 
-  @OneToMany(() => TravelReview, (travelReview) => travelReview.id)
+  @OneToMany(() => TravelReview, (travelReview) => travelReview.travelPost)
   travelReview: TravelReview[];
 }

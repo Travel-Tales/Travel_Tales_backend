@@ -7,7 +7,7 @@ export class CreateInputDto {
   @IsNumber()
   @ApiProperty({ description: '게시물 ID' })
   @Type(() => Number)
-  travelPostId: number;
+  postId: number;
 
   @IsString()
   @ApiProperty({ description: '제목' })

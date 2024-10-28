@@ -15,18 +15,20 @@ export class ReviewService {
     private readonly awsService: AwsService,
   ) {}
 
-  async getReviewList(): Promise<string> {
-    return 'hello';
+  async getReviewList(): Promise<any> {
+    return this.travelReviewRepository.find();
   }
 
   async createReview(userInfo, createInputDto, thumbnailFile): Promise<void> {
-    await this.postService.getUserTravelPost(createInputDto.travelPostId, userInfo.id);
+    await this.postService.getUserTravelPost(createInputDto.postId, userInfo.id);
+
+    const travelPost = (await this.postService.getPost(createInputDto.postId))[0];
 
     if (thumbnailFile) {
       const url = await this.awsService.uploadReviewImage(thumbnailFile, createInputDto);
       createInputDto['thumbnail'] = url;
     }
 
-    await this.travelReviewRepository.save(this.travelReviewRepository.create(createInputDto));
+    await this.travelReviewRepository.save(this.travelReviewRepository.create({ ...createInputDto, travelPost }));
   }
 }

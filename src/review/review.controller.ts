@@ -13,7 +13,7 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Get('/')
-  async getReviewList(): Promise<string> {
+  async getReviewList(): Promise<any> {
     return this.reviewService.getReviewList();
   }
 
