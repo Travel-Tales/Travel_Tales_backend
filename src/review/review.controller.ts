@@ -35,4 +35,10 @@ export class ReviewController {
   ): Promise<void> {
     return this.reviewService.createReview(userInfo, createInputDto, thumbnailFile);
   }
+
+  // async updateReview(
+  //   @UserInfo() userInfo,
+  //   @UploadedFile() thumbnailFile: Express.Multer.File,
+  //   @Body() updateInputDto:
+  // ) {}
 }

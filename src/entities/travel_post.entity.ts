@@ -50,6 +50,7 @@ export class TravelPost extends CoreEntity {
   @OneToMany(() => UserTravelPost, (userTravelPost) => userTravelPost.travelPost)
   userTravelPost: UserTravelPost[];
 
+  //연결 제대로 안됨 설정 필요
   @OneToMany(() => FileAttachment, (fileAttachment) => fileAttachment.id)
   fileAttachment: FileAttachment[];
 
