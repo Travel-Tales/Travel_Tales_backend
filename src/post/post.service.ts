@@ -28,7 +28,7 @@ export class PostService {
     @InjectRepository(InvitationVerification)
     private readonly invitationRepository: Repository<InvitationVerification>,
     @InjectRepository(FileAttachment)
-    private readonly fileAttchmentRepository: Repository<FileAttachment>,
+    private readonly fileAttachmentRepository: Repository<FileAttachment>,
     private readonly eventGateway: EventGateway,
     private readonly mailService: MailService,
     private readonly awsService: AwsService,
@@ -141,7 +141,7 @@ export class PostService {
 
   async deletePost(user: User, id: number): Promise<void> {
     await this.getUserTravelPost(id, user.id);
-    await this.fileAttchmentRepository.delete({ tableId: id });
+    await this.fileAttachmentRepository.delete({ tableId: id });
     await this.travelPostRepository.delete({ id });
   }
 

@@ -12,6 +12,7 @@ import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { MailModule } from './mail/mail.module';
 import { AwsModule } from './aws/aws.module';
 import { TravelReview } from './entities/travel_review.entity';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { TravelReview } from './entities/travel_review.entity';
     EventModule,
     MailModule,
     AwsModule,
+    ReviewModule,
   ],
   controllers: [],
   providers: [],
