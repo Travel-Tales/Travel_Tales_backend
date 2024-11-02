@@ -31,4 +31,6 @@ export class ReviewService {
 
     await this.travelReviewRepository.save(this.travelReviewRepository.create({ ...createInputDto, travelPost }));
   }
+
+  async updateReview(userInfo, updateInputDto, thumbnailFile): Promise<void> {}
 }

@@ -5,6 +5,7 @@ import { Role } from 'src/common/decorators/role.decorator';
 import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { RoleGuard } from 'src/common/guards/role.guard';
 import { CreateInputDto } from './dtos/create.dto';
+import { UpdateReviewInputDto } from './dtos/update.dto';
 import { ReviewService } from './review.service';
 
 @Controller('review')
@@ -36,9 +37,21 @@ export class ReviewController {
     return this.reviewService.createReview(userInfo, createInputDto, thumbnailFile);
   }
 
-  // async updateReview(
-  //   @UserInfo() userInfo,
-  //   @UploadedFile() thumbnailFile: Express.Multer.File,
-  //   @Body() updateInputDto:
-  // ) {}
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    summary: '게시물 수정 API',
+    description: '게시물 수정',
+  })
+  @ApiBody({ type: UpdateReviewInputDto })
+  @ApiBearerAuth('Authorization')
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(FileInterceptor('thumbnailFile'))
+  async updateReview(
+    @UserInfo() userInfo,
+    @UploadedFile() thumbnailFile: Express.Multer.File,
+    @Body() updateReviewInputDto: UpdateReviewInputDto,
+  ) {
+    return this.reviewService.updateReview(userInfo, updateReviewInputDto, thumbnailFile);
+  }
 }
