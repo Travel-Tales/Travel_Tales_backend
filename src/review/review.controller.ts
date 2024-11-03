@@ -19,6 +19,8 @@ export class ReviewController {
     return this.reviewService.getReviewList();
   }
 
+  async getReviewInfo() {}
+
   @ApiBearerAuth('Authorization')
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateInputDto })
