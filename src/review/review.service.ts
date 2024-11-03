@@ -1,9 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { AwsService } from 'src/aws/aws.service';
-import { FileAttachment, TravelPost, UserTravelPost } from 'src/entities';
+import { FileAttachment, TravelPost, User, UserTravelPost } from 'src/entities';
 import { TravelReview } from 'src/entities/travel_review.entity';
 import { PostService } from 'src/post/post.service';
 import { Repository } from 'typeorm';
+import { CreateInputDto } from './dtos/create.dto';
+import { UpdateReviewInputDto } from './dtos/update.dto';
 
 export class ReviewService {
   constructor(
@@ -19,18 +21,37 @@ export class ReviewService {
     return this.travelReviewRepository.find();
   }
 
-  async createReview(userInfo, createInputDto, thumbnailFile): Promise<void> {
+  async createReview(
+    userInfo: User,
+    createInputDto: CreateInputDto,
+    thumbnailFile: Express.Multer.File,
+  ): Promise<void> {
     await this.postService.getUserTravelPost(createInputDto.postId, userInfo.id);
-
     const travelPost = (await this.postService.getPost(createInputDto.postId))[0];
 
     if (thumbnailFile) {
-      const url = await this.awsService.uploadReviewImage(thumbnailFile, createInputDto);
+      const url = await this.awsService.createReviewImage(thumbnailFile, createInputDto);
       createInputDto['thumbnail'] = url;
     }
 
-    await this.travelReviewRepository.save(this.travelReviewRepository.create({ ...createInputDto, travelPost }));
+    await this.travelReviewRepository.save(this.travelReviewRepository.create({ ...createInputDto }));
   }
 
-  async updateReview(userInfo, updateInputDto, thumbnailFile): Promise<void> {}
+  async updateReview(
+    userInfo: User,
+    id: number,
+    updateInputDto: UpdateReviewInputDto,
+    thumbnailFile: Express.Multer.File,
+  ): Promise<void> {
+    await this.postService.getUserTravelPost(updateInputDto.postId, userInfo.id);
+
+    const travelReview = await this.travelReviewRepository.findOne({ where: { id } });
+
+    if (thumbnailFile) {
+      const url = await this.awsService.updateReviewImage(thumbnailFile, travelReview);
+      updateInputDto['thumbnail'] = url;
+    }
+
+    await this.travelReviewRepository.save(this.travelReviewRepository.create({ ...updateInputDto }));
+  }
 }

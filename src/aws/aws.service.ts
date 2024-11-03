@@ -9,7 +9,7 @@ import { FileAttachment } from 'src/entities';
 import { Repository, Equal } from 'typeorm';
 import * as crypto from 'crypto';
 import { TravelReview } from 'src/entities/travel_review.entity';
-
+import { CreateInputDto } from 'src/review/dtos/create.dto';
 @Injectable()
 export class AwsService {
   private s3: AWS.S3;
@@ -85,7 +85,14 @@ export class AwsService {
     return fileInfo.url;
   }
 
-  public async uploadReviewImage(file: Express.Multer.File, travelReview: TravelReview): Promise<string> {
+  public async createReviewImage(file: Express.Multer.File, createInputDto: CreateInputDto): Promise<string> {
+    const bucket = 'traveltales/thumbnail';
+    const { url } = await this.uploadFile(bucket, file);
+
+    return url;
+  }
+
+  public async updateReviewImage(file: Express.Multer.File, travelReview: TravelReview): Promise<string> {
     const bucket = 'traveltales/thumbnail';
     const fileType = 'thumbnail';
     const { url } = await this.uploadFile(bucket, file);

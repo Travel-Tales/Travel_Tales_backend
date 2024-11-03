@@ -3,6 +3,11 @@ import { IsArray, IsDate, IsEnum, IsIn, IsNumber, IsOptional, IsString, Matches 
 import { ApiProperty } from '@nestjs/swagger';
 import { VisibilityStatus } from 'src/entities';
 export class UpdateReviewInputDto {
+  @IsNumber()
+  @ApiProperty({ description: '게시물 ID' })
+  @Type(() => Number)
+  postId: number;
+
   @ApiProperty({ description: '제목', required: false })
   @IsOptional()
   @IsString()
