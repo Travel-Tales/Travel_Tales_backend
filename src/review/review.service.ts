@@ -54,4 +54,8 @@ export class ReviewService {
 
     await this.travelReviewRepository.save(this.travelReviewRepository.create({ ...updateInputDto }));
   }
+
+  async getReviewInfo(id: number): Promise<TravelReview> {
+    return this.travelReviewRepository.findOne({ where: { id } });
+  }
 }

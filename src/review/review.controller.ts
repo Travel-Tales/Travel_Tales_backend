@@ -5,6 +5,7 @@ import { Role } from 'src/common/decorators/role.decorator';
 import { UserInfo } from 'src/common/decorators/userInfo.decorator';
 import { IDParamDTO } from 'src/common/dtos/id.param';
 import { RoleGuard } from 'src/common/guards/role.guard';
+import { TravelReview } from 'src/entities/travel_review.entity';
 import { CreateInputDto } from './dtos/create.dto';
 import { UpdateReviewInputDto } from './dtos/update.dto';
 import { ReviewService } from './review.service';
@@ -19,7 +20,19 @@ export class ReviewController {
     return this.reviewService.getReviewList();
   }
 
-  async getReviewInfo() {}
+  @ApiBearerAuth('Authorization')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    summary: '리뷰 게시물 만들기',
+    description: '리뷰 게시물 만들기',
+  })
+  @Role(['Any'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(FileInterceptor('thumbnailFile'))
+  @Get('/:id')
+  async getReviewInfo(@Param() params: IDParamDTO): Promise<TravelReview> {
+    return this.reviewService.getReviewInfo(params.id);
+  }
 
   @ApiBearerAuth('Authorization')
   @ApiConsumes('multipart/form-data')
