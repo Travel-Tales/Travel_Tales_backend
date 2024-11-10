@@ -1,4 +1,4 @@
-import { CoreEntity } from 'src/common/entities/core.entity';
+import { CoreEntity } from '../common/entities/core.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { UserTravelPost } from './user_travel_post.entity';

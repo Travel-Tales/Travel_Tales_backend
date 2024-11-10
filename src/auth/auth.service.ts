@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Profile } from 'passport-google-oauth20';
-import { User, UserLoginType } from 'src/entities';
-import { IPayload, ITokens } from 'src/jwt/interfaces';
-import { JwtService } from 'src/jwt/jwt.service';
-import { UserService } from 'src/user/user.service';
+import { User, UserLoginType } from '../entities';
+import { IPayload, ITokens } from '../jwt/interfaces';
+import { JwtService } from '../jwt/jwt.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -16,10 +16,7 @@ export class AuthService {
     let userInfo = await this.userService.getUserInfoByEmail(user._json.email);
 
     if (!userInfo) {
-      userInfo = await this.userService.createUserInfo(
-        user._json.email,
-        loginType,
-      );
+      userInfo = await this.userService.createUserInfo(user._json.email, loginType);
     }
 
     const refresh = this.jwtService.createRefreshToken(userInfo);
@@ -28,15 +25,10 @@ export class AuthService {
   }
 
   async loginKakao(user: Profile, loginType: UserLoginType): Promise<ITokens> {
-    let userInfo = await this.userService.getUserInfoByEmail(
-      user._json.kakao_account.email,
-    );
+    let userInfo = await this.userService.getUserInfoByEmail(user._json.kakao_account.email);
 
     if (!userInfo) {
-      userInfo = await this.userService.createUserInfo(
-        user._json.kakao_account.email,
-        loginType,
-      );
+      userInfo = await this.userService.createUserInfo(user._json.kakao_account.email, loginType);
     }
 
     const refresh = this.jwtService.createRefreshToken(userInfo);

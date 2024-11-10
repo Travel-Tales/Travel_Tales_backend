@@ -2,8 +2,8 @@ import { Global, Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/entities';
-import { AwsModule } from 'src/aws/aws.module';
+import { User } from '../entities';
+import { AwsModule } from '../aws/aws.module';
 
 @Global()
 @Module({

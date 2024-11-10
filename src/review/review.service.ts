@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { AwsService } from 'src/aws/aws.service';
-import { FileAttachment, TravelPost, User, UserTravelPost } from 'src/entities';
-import { TravelReview } from 'src/entities/travel_review.entity';
-import { PostService } from 'src/post/post.service';
+import { AwsService } from '../aws/aws.service';
+import { FileAttachment, TravelPost, User, UserTravelPost } from '../entities';
+import { TravelReview } from '../entities/travel_review.entity';
+import { PostService } from '../post/post.service';
 import { Repository } from 'typeorm';
 import { CreateInputDto } from './dtos/create.dto';
 import { UpdateReviewInputDto } from './dtos/update.dto';

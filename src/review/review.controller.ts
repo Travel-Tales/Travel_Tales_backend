@@ -1,11 +1,11 @@
 import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/common/decorators/role.decorator';
-import { UserInfo } from 'src/common/decorators/userInfo.decorator';
-import { IDParamDTO } from 'src/common/dtos/id.param';
-import { RoleGuard } from 'src/common/guards/role.guard';
-import { TravelReview } from 'src/entities/travel_review.entity';
+import { Role } from '../common/decorators/role.decorator';
+import { UserInfo } from '../common/decorators/userInfo.decorator';
+import { IDParamDTO } from '../common/dtos/id.param';
+import { RoleGuard } from '../common/guards/role.guard';
+import { TravelReview } from '../entities/travel_review.entity';
 import { CreateInputDto } from './dtos/create.dto';
 import { UpdateReviewInputDto } from './dtos/update.dto';
 import { ReviewService } from './review.service';

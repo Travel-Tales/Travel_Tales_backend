@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AwsModule } from 'src/aws/aws.module';
-import { FileAttachment } from 'src/entities';
-import { TravelReview } from 'src/entities/travel_review.entity';
-import { PostModule } from 'src/post/post.module';
+import { AwsModule } from '../aws/aws.module';
+import { FileAttachment } from '../entities';
+import { TravelReview } from '../entities/travel_review.entity';
+import { PostModule } from '../post/post.module';
 import { ReviewController } from './review.controller';
 import { ReviewService } from './review.service';
 

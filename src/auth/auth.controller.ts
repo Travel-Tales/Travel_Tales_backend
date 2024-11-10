@@ -1,17 +1,12 @@
 import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { User, UserLoginType } from 'src/entities';
-import { ITokens } from 'src/jwt/interfaces';
-import {
-  ApiTags,
-  ApiExcludeEndpoint,
-  ApiOperation,
-  ApiCookieAuth,
-} from '@nestjs/swagger';
-import { UserInfo } from 'src/common/decorators/userInfo.decorator';
-import { Role } from 'src/common/decorators/role.decorator';
-import { RefreshGuard } from 'src/common/guards/refresh.guard';
+import { User, UserLoginType } from '../entities';
+import { ITokens } from '../jwt/interfaces';
+import { ApiTags, ApiExcludeEndpoint, ApiOperation, ApiCookieAuth } from '@nestjs/swagger';
+import { UserInfo } from '../common/decorators/userInfo.decorator';
+import { Role } from '../common/decorators/role.decorator';
+import { RefreshGuard } from '../common/guards/refresh.guard';
 import { Response, Request } from 'express';
 import { ICookieOptions } from './interfaces';
 
@@ -32,16 +27,10 @@ export class AuthController {
   @Get('google/callback')
   @ApiExcludeEndpoint()
   async googleAuthCallback(@UserInfo() userInfo: User, @Req() req, @Res() res) {
-    const { refresh } = await this.authService.loginGoogle(
-      userInfo,
-      UserLoginType.Google,
-    );
+    const { refresh } = await this.authService.loginGoogle(userInfo, UserLoginType.Google);
 
     this.setCookie(req, res, 'refresh', refresh);
-    const redirectURL: string =
-      req.hostname === 'localhost'
-        ? 'http://localhost:3000'
-        : 'https://www.traveltales.kr';
+    const redirectURL: string = req.hostname === 'localhost' ? 'http://localhost:3000' : 'https://www.traveltales.kr';
 
     return res.status(200).redirect(redirectURL);
   }
@@ -58,16 +47,10 @@ export class AuthController {
   @Get('kakao/callback')
   @ApiExcludeEndpoint()
   async kakaoAuthCallback(@UserInfo() userInfo: User, @Req() req, @Res() res) {
-    const { refresh } = await this.authService.loginKakao(
-      userInfo,
-      UserLoginType.Kakao,
-    );
+    const { refresh } = await this.authService.loginKakao(userInfo, UserLoginType.Kakao);
 
     this.setCookie(req, res, 'refresh', refresh);
-    const redirectURL: string =
-      req.hostname === 'localhost'
-        ? 'http://localhost:3000'
-        : 'https://www.traveltales.kr';
+    const redirectURL: string = req.hostname === 'localhost' ? 'http://localhost:3000' : 'https://www.traveltales.kr';
 
     return res.status(200).redirect(redirectURL);
   }
@@ -79,12 +62,8 @@ export class AuthController {
   })
   @UseGuards(RefreshGuard)
   @Post('refresh')
-  async updateAccessToken(
-    @UserInfo() userInfo: User,
-    @Res({ passthrough: true }) res,
-  ): Promise<ITokens> {
-    const { refresh, access } =
-      await this.authService.updateAccessToken(userInfo);
+  async updateAccessToken(@UserInfo() userInfo: User, @Res({ passthrough: true }) res): Promise<ITokens> {
+    const { refresh, access } = await this.authService.updateAccessToken(userInfo);
 
     res.cookie('refresh', refresh, {
       httpOnly: true,
@@ -104,8 +83,7 @@ export class AuthController {
   }
 
   setCookie(req: Request, res: Response, cookieName: string, cookieValue) {
-    const domain: string =
-      req.hostname === 'localhost' ? 'localhost' : 'www.traveltales.kr';
+    const domain: string = req.hostname === 'localhost' ? 'localhost' : 'www.traveltales.kr';
 
     const cookieOption: ICookieOptions = {
       httpOnly: true,

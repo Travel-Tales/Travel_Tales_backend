@@ -2,14 +2,14 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
-import { TravelPost, User } from 'src/entities';
-import { UpdatePostInputDto } from 'src/post/dtos/update.post.dto';
+import { TravelPost, User } from '../entities';
+import { UpdatePostInputDto } from '../post/dtos/update.post.dto';
 import { IBucketOption } from './interfaces';
-import { FileAttachment } from 'src/entities';
+import { FileAttachment } from '../entities';
 import { Repository, Equal } from 'typeorm';
 import * as crypto from 'crypto';
-import { TravelReview } from 'src/entities/travel_review.entity';
-import { CreateInputDto } from 'src/review/dtos/create.dto';
+import { TravelReview } from '../entities/travel_review.entity';
+import { CreateInputDto } from '../review/dtos/create.dto';
 @Injectable()
 export class AwsService {
   private s3: AWS.S3;

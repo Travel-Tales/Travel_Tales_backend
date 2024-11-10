@@ -1,4 +1,4 @@
-import { CoreEntity } from 'src/common/entities/core.entity';
+import { CoreEntity } from '../common/entities/core.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 import { IsEmail, IsString } from 'class-validator';
 import { TravelPost } from './travel_post.entity';

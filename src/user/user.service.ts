@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserLoginType } from '../entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { AwsService } from 'src/aws/aws.service';
+import { AwsService } from '../aws/aws.service';
 import { UpdateProfileInputDto, UpdateProfileOutputDto } from './dto/update.profile.dto';
 
 @Injectable()

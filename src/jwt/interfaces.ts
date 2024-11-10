@@ -1,4 +1,4 @@
-import { UserLoginType } from 'src/entities';
+import { UserLoginType } from '../entities';
 
 export interface IPayload {
   id: number;

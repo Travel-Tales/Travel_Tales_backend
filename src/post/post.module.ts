@@ -2,10 +2,10 @@ import { forwardRef, Module } from '@nestjs/common';
 import { PostService } from './post.service';
 import { PostController } from './post.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TravelPost, UserTravelPost, InvitationVerification, FileAttachment } from 'src/entities';
-import { EventModule } from 'src/event/event.module';
-import { MailModule } from 'src/mail/mail.module';
-import { AwsModule } from 'src/aws/aws.module';
+import { TravelPost, UserTravelPost, InvitationVerification, FileAttachment } from '../entities';
+import { EventModule } from '../event/event.module';
+import { MailModule } from '../mail/mail.module';
+import { AwsModule } from '../aws/aws.module';
 
 @Module({
   imports: [

@@ -24,16 +24,16 @@ import {
   ApiConsumes,
   ApiResponse,
 } from '@nestjs/swagger';
-import { Role } from 'src/common/decorators/role.decorator';
-import { RoleGuard } from 'src/common/guards/role.guard';
-import { UserInfo } from 'src/common/decorators/userInfo.decorator';
-import { TravelPost, User, UserTravelPost } from 'src/entities';
+import { Role } from '../common/decorators/role.decorator';
+import { RoleGuard } from '../common/guards/role.guard';
+import { UserInfo } from '../common/decorators/userInfo.decorator';
+import { TravelPost, User, UserTravelPost } from '../entities';
 import { GetPostOutputDTO } from './dtos/get.post.dto';
 import { PermissionInputDTO } from './dtos/permission.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UploadImageInputDTO, UploadImageOutputDTO } from './dtos/uploadImage.dto';
-import { IDParamDTO } from 'src/common/dtos/id.param';
-import { PostQueryStringDTO } from 'src/post/dtos/get.query';
+import { IDParamDTO } from '../common/dtos/id.param';
+import { PostQueryStringDTO } from '../post/dtos/get.query';
 
 @Controller('post')
 @ApiTags('Post')

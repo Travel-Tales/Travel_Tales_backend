@@ -1,5 +1,7 @@
 import { IsString, IsNumber } from 'class-validator';
-import { CoreEntity } from 'src/common/entities/core.entity';
+
+import { CoreEntity } from '../common/entities/core.entity';
+
 import { Column, Entity } from 'typeorm';
 import { TravelPost } from './travel_post.entity';
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { NotFoundException } from 'src/common/exceptions/service.exception';
-import { PostService } from 'src/post/post.service';
+import { NotFoundException } from '../common/exceptions/service.exception';
+import { PostService } from '../post/post.service';
 import { Socket } from 'socket.io';
 
 @Injectable()

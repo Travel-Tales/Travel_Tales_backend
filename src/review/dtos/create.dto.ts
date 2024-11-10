@@ -1,6 +1,6 @@
 import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { TravelReview } from 'src/entities/travel_review.entity';
+import { TravelReview } from '../../entities/travel_review.entity';
 import { Type } from 'class-transformer';
 
 export class CreateInputDto {

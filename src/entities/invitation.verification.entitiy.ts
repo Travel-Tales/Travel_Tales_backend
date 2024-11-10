@@ -1,13 +1,6 @@
 import { IsBoolean, IsEmail, IsNumber, IsUUID } from 'class-validator';
-import { CoreEntity } from 'src/common/entities/core.entity';
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  Entity,
-  Index,
-  Unique,
-} from 'typeorm';
+import { CoreEntity } from '../common/entities/core.entity';
+import { BeforeInsert, BeforeUpdate, Column, Entity, Index, Unique } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity()

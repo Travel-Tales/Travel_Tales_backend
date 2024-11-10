@@ -7,15 +7,15 @@ import {
   InvitationVerification,
   User,
   FileAttachment,
-} from 'src/entities';
+} from '../entities';
 import { Like, Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdatePostInputDto } from './dtos/update.post.dto';
-import { ForbiddenException, NotFoundException } from 'src/common/exceptions/service.exception';
-import { EventGateway } from 'src/event/event.gateway';
+import { ForbiddenException, NotFoundException } from '../common/exceptions/service.exception';
+import { EventGateway } from '../event/event.gateway';
 import { PermissionInputDTO } from './dtos/permission.dto';
-import { MailService } from 'src/mail/mail.service';
-import { AwsService } from 'src/aws/aws.service';
+import { MailService } from '../mail/mail.service';
+import { AwsService } from '../aws/aws.service';
 import { PostQueryStringDTO } from './dtos/get.query';
 
 @Injectable()
