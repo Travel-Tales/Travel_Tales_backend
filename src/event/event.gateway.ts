@@ -10,9 +10,9 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { JwtService } from 'src/jwt/jwt.service';
-import { IPayload } from 'src/jwt/interfaces';
-import { TravelPost } from 'src/entities';
+import { JwtService } from '../jwt/jwt.service';
+import { IPayload } from '../jwt/interfaces';
+import { TravelPost } from '../entities';
 import { Logger } from '@nestjs/common';
 
 @WebSocketGateway({
@@ -20,9 +20,7 @@ import { Logger } from '@nestjs/common';
   transports: ['websocket'],
   cors: { origin: '*' },
 })
-export class EventGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
+export class EventGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger('EventGateway');
 
   @WebSocketServer()
@@ -45,9 +43,7 @@ export class EventGateway
         throw new Error();
       }
 
-      const user: IPayload = this.jwtService.verifyAccessToken(
-        token.split(' ')[1],
-      );
+      const user: IPayload = this.jwtService.verifyAccessToken(token.split(' ')[1]);
       client.data.user = user;
       client.emit('setInitSuccess', { message: 'Initialization successful' });
     } catch (e) {
@@ -65,10 +61,7 @@ export class EventGateway
   }
 
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody('postId') postId,
-  ) {
+  handleJoinRoom(@ConnectedSocket() client: Socket, @MessageBody('postId') postId) {
     if (!client.data.user) {
       client.emit('error', { message: 'Not found User' });
     }
@@ -76,10 +69,7 @@ export class EventGateway
   }
 
   @SubscribeMessage('leaveRoom')
-  handleLeaveRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody('postId') postId,
-  ) {
+  handleLeaveRoom(@ConnectedSocket() client: Socket, @MessageBody('postId') postId) {
     return this.gatewayService.leaveRoom(postId, client);
   }
 

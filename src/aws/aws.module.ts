@@ -3,7 +3,7 @@ import { Module, Global } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
 import { AwsService } from './aws.service';
-import { FileAttachment } from 'src/entities';
+import { FileAttachment } from '../entities';
 
 @Global()
 @Module({

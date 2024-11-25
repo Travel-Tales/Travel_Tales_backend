@@ -1,8 +1,8 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { EventService } from './event.service';
 import { EventGateway } from './event.gateway';
-import { PostModule } from 'src/post/post.module';
-import { JwtModule } from 'src/jwt/jwt.module';
+import { PostModule } from '../post/post.module';
+import { JwtModule } from '../jwt/jwt.module';
 
 @Module({
   imports: [JwtModule],

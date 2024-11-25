@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsDate, IsEnum, IsIn, IsNumber, IsString } from 'class-validator';
-import { CoreOutput } from 'src/common/dtos/core.output';
-import { VisibilityStatus } from 'src/entities';
-import { MyProfileOutputDTO } from 'src/user/dto/myprofile.dto';
+import { CoreOutput } from '../../common/dtos/core.output';
+import { VisibilityStatus } from '../../entities';
+import { MyProfileOutputDTO } from '../../user/dto/myprofile.dto';
 
 export class GetPostOutputDTO {
   @IsNumber()

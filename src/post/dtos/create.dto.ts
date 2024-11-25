@@ -1,7 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import { IsDate, IsEnum, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { TravelPost, VisibilityStatus } from 'src/entities';
+import { TravelPost, VisibilityStatus } from '../../entities';
 
 export class CreateInputDto {
   @IsString()

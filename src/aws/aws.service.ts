@@ -2,13 +2,14 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as AWS from 'aws-sdk';
-import { TravelPost, User } from 'src/entities';
-import { UpdatePostInputDto } from 'src/post/dtos/update.post.dto';
+import { TravelPost, User } from '../entities';
+import { UpdatePostInputDto } from '../post/dtos/update.post.dto';
 import { IBucketOption } from './interfaces';
-import { FileAttachment } from 'src/entities';
+import { FileAttachment } from '../entities';
 import { Repository, Equal } from 'typeorm';
 import * as crypto from 'crypto';
-
+import { TravelReview } from '../entities/travel_review.entity';
+import { CreateInputDto } from '../review/dtos/create.dto';
 @Injectable()
 export class AwsService {
   private s3: AWS.S3;
@@ -82,6 +83,25 @@ export class AwsService {
     }
 
     return fileInfo.url;
+  }
+
+  public async createReviewImage(file: Express.Multer.File, createInputDto: CreateInputDto): Promise<string> {
+    const bucket = 'traveltales/thumbnail';
+    const { url } = await this.uploadFile(bucket, file);
+
+    return url;
+  }
+
+  public async updateReviewImage(file: Express.Multer.File, travelReview: TravelReview): Promise<string> {
+    const bucket = 'traveltales/thumbnail';
+    const fileType = 'thumbnail';
+    const { url } = await this.uploadFile(bucket, file);
+
+    if (travelReview.thumbnail) {
+      await this.deleteFile(bucket, travelReview.thumbnail, fileType);
+    }
+
+    return url;
   }
 
   public async uploadPostImage(file: Express.Multer.File, travelPost: TravelPost): Promise<string> {

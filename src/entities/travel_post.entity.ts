@@ -1,9 +1,10 @@
-import { CoreEntity } from 'src/common/entities/core.entity';
+import { CoreEntity } from '../common/entities/core.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { IsDate, IsNumber, IsString } from 'class-validator';
 import { UserTravelPost } from './user_travel_post.entity';
 import { FileAttachment } from './file_attachment.entity';
 import { Transform } from 'class-transformer';
+import { TravelReview } from './travel_review.entity';
 
 export type VisibilityStatus = 'Public' | 'Private';
 
@@ -34,11 +35,11 @@ export class TravelPost extends CoreEntity {
   @IsString()
   thumbnail: string;
 
-  @Column({ default: new Date() })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @IsDate()
   startDate: Date;
 
-  @Column({ default: new Date() })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   @IsDate()
   endDate: Date;
 
@@ -49,6 +50,10 @@ export class TravelPost extends CoreEntity {
   @OneToMany(() => UserTravelPost, (userTravelPost) => userTravelPost.travelPost)
   userTravelPost: UserTravelPost[];
 
+  //연결 제대로 안됨 설정 필요
   @OneToMany(() => FileAttachment, (fileAttachment) => fileAttachment.id)
   fileAttachment: FileAttachment[];
+
+  @OneToMany(() => TravelReview, (travelReview) => travelReview.travelPost)
+  travelReview: TravelReview[];
 }

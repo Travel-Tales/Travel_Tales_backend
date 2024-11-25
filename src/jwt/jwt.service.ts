@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { IPayload } from './interfaces';
 import * as jwt from 'jsonwebtoken';
-import { User } from 'src/entities';
-import { ExpiredTokenException } from 'src/common/exceptions/service.exception';
+import { User } from '../entities';
+import { ExpiredTokenException } from '../common/exceptions/service.exception';
 
 @Injectable()
 export class JwtService {

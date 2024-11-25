@@ -7,15 +7,15 @@ import {
   InvitationVerification,
   User,
   FileAttachment,
-} from 'src/entities';
+} from '../entities';
 import { Like, Repository } from 'typeorm';
 import { CreateInputDto, CreateOutPutDto } from './dtos/create.dto';
 import { UpdatePostInputDto } from './dtos/update.post.dto';
-import { ForbiddenException, NotFoundException } from 'src/common/exceptions/service.exception';
-import { EventGateway } from 'src/event/event.gateway';
+import { ForbiddenException, NotFoundException } from '../common/exceptions/service.exception';
+import { EventGateway } from '../event/event.gateway';
 import { PermissionInputDTO } from './dtos/permission.dto';
-import { MailService } from 'src/mail/mail.service';
-import { AwsService } from 'src/aws/aws.service';
+import { MailService } from '../mail/mail.service';
+import { AwsService } from '../aws/aws.service';
 import { PostQueryStringDTO } from './dtos/get.query';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class PostService {
     @InjectRepository(InvitationVerification)
     private readonly invitationRepository: Repository<InvitationVerification>,
     @InjectRepository(FileAttachment)
-    private readonly fileAttchmentRepository: Repository<FileAttachment>,
+    private readonly fileAttachmentRepository: Repository<FileAttachment>,
     private readonly eventGateway: EventGateway,
     private readonly mailService: MailService,
     private readonly awsService: AwsService,
@@ -141,7 +141,7 @@ export class PostService {
 
   async deletePost(user: User, id: number): Promise<void> {
     await this.getUserTravelPost(id, user.id);
-    await this.fileAttchmentRepository.delete({ tableId: id });
+    await this.fileAttachmentRepository.delete({ tableId: id });
     await this.travelPostRepository.delete({ id });
   }
 

@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { UserLoginType } from 'src/entities/user.entity';
+import { UserLoginType } from '../../entities/user.entity';
 
 /** 이 데코레이터는 metadata를 설정한다. */
 export type AllowedRoles = keyof typeof UserLoginType | 'Any';

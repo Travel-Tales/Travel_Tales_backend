@@ -2,13 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  User,
-  UserTravelPost,
-  TravelPost,
-  InvitationVerification,
-  FileAttachment,
-} from './entities';
+import { User, UserTravelPost, TravelPost, InvitationVerification, FileAttachment } from './entities';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from './jwt/jwt.module';
 import { UserModule } from './user/user.module';
@@ -17,6 +11,8 @@ import { EventModule } from './event/event.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { MailModule } from './mail/mail.module';
 import { AwsModule } from './aws/aws.module';
+import { TravelReview } from './entities/travel_review.entity';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -49,13 +45,7 @@ import { AwsModule } from './aws/aws.module';
       database: process.env.DB_NAME,
       logging: process.env.NODE_ENV === 'prod' ? false : true,
       synchronize: process.env.NODE_ENV === 'prod' ? false : true,
-      entities: [
-        User,
-        UserTravelPost,
-        TravelPost,
-        InvitationVerification,
-        FileAttachment,
-      ],
+      entities: [User, UserTravelPost, TravelPost, InvitationVerification, FileAttachment, TravelReview],
       extra: {
         connectionTimeoutMillis: 10000,
         ssl: { rejectUnauthorized: process.env.NODE_ENV === 'prod' },
@@ -71,6 +61,7 @@ import { AwsModule } from './aws/aws.module';
     EventModule,
     MailModule,
     AwsModule,
+    ReviewModule,
   ],
   controllers: [],
   providers: [],

@@ -1,10 +1,10 @@
 import { Controller, Get, UseGuards, UploadedFile, UseInterceptors, Patch, Body } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/common/decorators/role.decorator';
-import { UserInfo } from 'src/common/decorators/userInfo.decorator';
-import { RoleGuard } from 'src/common/guards/role.guard';
-import { User } from 'src/entities';
+import { Role } from '../common/decorators/role.decorator';
+import { UserInfo } from '../common/decorators/userInfo.decorator';
+import { RoleGuard } from '../common/guards/role.guard';
+import { User } from '../entities';
 import { MyProfileOutputDTO } from './dto/myprofile.dto';
 import { UpdateProfileInputDto, UpdateProfileOutputDto } from './dto/update.profile.dto';
 import { UserService } from './user.service';

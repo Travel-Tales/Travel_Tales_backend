@@ -1,7 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import { IsArray, IsDate, IsEnum, IsIn, IsNumber, IsOptional, IsString, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { VisibilityStatus } from 'src/entities';
+import { VisibilityStatus } from '../../entities';
 export class UpdatePostInputDto {
   @ApiProperty({ description: '제목', required: false })
   @IsOptional()
