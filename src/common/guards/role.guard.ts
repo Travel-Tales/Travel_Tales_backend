@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JwtService } from 'src/jwt/jwt.service';
-import { UserService } from 'src/user/user.service';
+import { JwtService } from '../../jwt/jwt.service';
+import { UserService } from '../../user/user.service';
 import { AllowedRoles } from '../decorators/role.decorator';
 import { ForbiddenException } from '../exceptions/service.exception';
 

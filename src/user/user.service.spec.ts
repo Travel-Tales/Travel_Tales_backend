@@ -1,32 +1,64 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { User } from 'src/entities';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { User } from '../entities/user.entity';
+import { Repository } from 'typeorm';
 import { UserService } from './user.service';
+import { AwsService } from '../aws/aws.service';
+import { AwsModule } from '../aws/aws.module';
 
 describe('UserService', () => {
-  let service: UserService;
-  let userRepository: mockRepository<UseR>;
+  type mockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
+
+  const mockRepository = () => ({
+    delete: jest.fn(),
+    findOne: jest.fn(),
+  });
+
+  let userService: UserService;
+  let userRepository: mockRepository<User>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UserService],
+      providers: [
+        UserService,
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockRepository(),
+        },
+        {
+          provide: AwsService,
+          useValue: {
+            uploadUserImage: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
-    service = module.get<UserService>(UserService);
-    userRepository = module.get(UserRepository(User));
+    userService = module.get<UserService>(UserService);
+    userRepository = module.get(getRepositoryToken(User));
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(userService).toBeDefined();
   });
 
   describe('findUser', () => {
-    const email = 'indeajhon@gmail.com';
+    it('shoud fail if user does not exists', async () => {
+      const email = 'test@gmail.com';
+      userRepository.findOne.mockResolvedValue(undefined);
 
-    it('shoud fail if user not exists', () => {
-      user;
+      const result = await userService.getUserInfoByEmail(email);
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(undefined);
+    });
+    it('should return user by email', async () => {
+      const email = 'test@gamil.com';
+      userRepository.findOne.mockResolvedValue(email);
+
+      const result = await userService.getUserInfoByEmail(email);
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(userRepository.findOne).toHaveBeenCalledWith({ where: { email } });
+      expect(result).toEqual(email);
     });
   });
 });
-function UserRepository(User: typeof User): string | symbol | Function | import('@nestjs/common').Type<any> {
-  throw new Error('Function not implemented.');
-}
