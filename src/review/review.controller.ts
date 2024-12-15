@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Delete, Patch } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { userInfo } from 'os';
 import { Role } from '../common/decorators/role.decorator';
 import { UserInfo } from '../common/decorators/userInfo.decorator';
 import { IDParamDTO } from '../common/dtos/id.param';
@@ -63,6 +65,7 @@ export class ReviewController {
   @Role(['Google', 'Kakao'])
   @UseGuards(RoleGuard)
   @UseInterceptors(FileInterceptor('thumbnailFile'))
+  @Patch(':id')
   async updateReview(
     @Param() params: IDParamDTO,
     @UserInfo() userInfo,
@@ -70,5 +73,18 @@ export class ReviewController {
     @Body() updateReviewInputDto: UpdateReviewInputDto,
   ) {
     return this.reviewService.updateReview(userInfo, params.id, updateReviewInputDto, thumbnailFile);
+  }
+
+  @ApiOperation({
+    summary: '게시물 삭제 API',
+    description: '게시물 삭제',
+  })
+  @ApiBearerAuth('Authorization')
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(FileInterceptor('thumbnailFile'))
+  @Delete(':id')
+  async deleteReview(@Param() Params: IDParamDTO, @UserInfo() userInfo) {
+    return this.reviewService.deleteReview(userInfo, Params.id);
   }
 }

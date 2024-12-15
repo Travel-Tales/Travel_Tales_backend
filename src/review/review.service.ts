@@ -6,6 +6,7 @@ import { PostService } from '../post/post.service';
 import { Repository } from 'typeorm';
 import { CreateInputDto } from './dtos/create.dto';
 import { UpdateReviewInputDto } from './dtos/update.dto';
+import { create } from 'domain';
 
 export class ReviewService {
   constructor(
@@ -26,15 +27,17 @@ export class ReviewService {
     createInputDto: CreateInputDto,
     thumbnailFile: Express.Multer.File,
   ): Promise<void> {
-    await this.postService.getUserTravelPost(createInputDto.postId, userInfo.id);
-    const travelPost = (await this.postService.getPost(createInputDto.postId))[0];
+    await this.postService.getUserTravelPost(createInputDto.travelPostId, userInfo.id);
+    const travelPost: TravelPost = (await this.postService.getPost(createInputDto.travelPostId))[0];
 
     if (thumbnailFile) {
       const url = await this.awsService.createReviewImage(thumbnailFile, createInputDto);
       createInputDto['thumbnail'] = url;
     }
 
-    await this.travelReviewRepository.save(this.travelReviewRepository.create({ ...createInputDto }));
+    const reviewEntity = this.travelReviewRepository.create(createInputDto);
+    reviewEntity.travelPost = travelPost;
+    await this.travelReviewRepository.save(reviewEntity);
   }
 
   async updateReview(
@@ -57,5 +60,9 @@ export class ReviewService {
 
   async getReviewInfo(id: number): Promise<TravelReview> {
     return this.travelReviewRepository.findOne({ where: { id } });
+  }
+
+  async deleteReview(userInfo, id) {
+    return this.travelReviewRepository.delete({ id });
   }
 }

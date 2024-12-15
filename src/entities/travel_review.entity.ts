@@ -18,5 +18,6 @@ export class TravelReview extends CoreEntity {
   thumbnail: string;
 
   @ManyToOne(() => TravelPost, (travelPost) => travelPost.travelReview, { eager: true, nullable: false })
+  @JoinColumn({ name: 'travelPostId' })
   travelPost: TravelPost;
 }
