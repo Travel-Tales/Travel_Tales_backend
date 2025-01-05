@@ -17,16 +17,32 @@ import { ReviewService } from './review.service';
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
+  @ApiOperation({
+    summary: '리뷰 가져오기',
+    description: '리뷰 가져오기',
+  })
   @Get('/')
-  async getReviewList(): Promise<any> {
+  async getReviewList(): Promise<TravelReview[]> {
     return this.reviewService.getReviewList();
+  }
+
+  @ApiBearerAuth('Authorization')
+  @ApiOperation({
+    summary: '내 리뷰 가져오기',
+    description: '내 리뷰 가져오기',
+  })
+  @Role(['Google', 'Kakao'])
+  @UseGuards(RoleGuard)
+  @Get('myReview')
+  async getMyReviewList(@UserInfo() userInfo): Promise<TravelReview[]> {
+    return this.reviewService.getMyReview(userInfo);
   }
 
   @ApiBearerAuth('Authorization')
   @ApiConsumes('multipart/form-data')
   @ApiOperation({
-    summary: '리뷰 게시물 만들기',
-    description: '리뷰 게시물 만들기',
+    summary: '리뷰 상세 가져오기',
+    description: '리뷰 상세 가져오기',
   })
   @Role(['Any'])
   @UseGuards(RoleGuard)

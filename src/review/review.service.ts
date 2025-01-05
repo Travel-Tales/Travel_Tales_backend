@@ -3,7 +3,7 @@ import { AwsService } from '../aws/aws.service';
 import { FileAttachment, TravelPost, User, UserTravelPost } from '../entities';
 import { TravelReview } from '../entities/travel_review.entity';
 import { PostService } from '../post/post.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CreateInputDto } from './dtos/create.dto';
 import { UpdateReviewInputDto } from './dtos/update.dto';
 import { create } from 'domain';
@@ -18,8 +18,16 @@ export class ReviewService {
     private readonly awsService: AwsService,
   ) {}
 
-  async getReviewList(): Promise<any> {
+  async getReviewList(): Promise<TravelReview[]> {
     return this.travelReviewRepository.find();
+  }
+
+  async getMyReview(userInfo: User): Promise<TravelReview[]> {
+    const travelPost: TravelPost[] = await this.postService.getMyPost(userInfo);
+
+    const ids = travelPost.map((ele) => ele.id);
+
+    return this.travelReviewRepository.findBy({ travelPost: In(ids) });
   }
 
   async createReview(
@@ -59,7 +67,7 @@ export class ReviewService {
   }
 
   async getReviewInfo(id: number): Promise<TravelReview> {
-    return this.travelReviewRepository.findOne({ where: { id } });
+    return this.travelReviewRepository.findOne({ where: { id }, relations: ['travelPost'] });
   }
 
   async deleteReview(userInfo, id) {
