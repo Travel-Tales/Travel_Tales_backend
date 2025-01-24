@@ -54,16 +54,21 @@ export class ReviewService {
     updateInputDto: UpdateReviewInputDto,
     thumbnailFile: Express.Multer.File,
   ): Promise<void> {
-    await this.postService.getUserTravelPost(updateInputDto.postId, userInfo.id);
+    const travelReview = await this.getReviewInfo(id);
 
-    const travelReview = await this.travelReviewRepository.findOne({ where: { id } });
+    const travelPost = travelReview.travelPost;
+    const postId = travelPost.id;
+
+    updateInputDto['travelPost'] = travelPost;
+
+    await this.postService.getUserTravelPost(postId, userInfo.id);
 
     if (thumbnailFile) {
       const url = await this.awsService.updateReviewImage(thumbnailFile, travelReview);
       updateInputDto['thumbnail'] = url;
     }
-
-    await this.travelReviewRepository.save(this.travelReviewRepository.create({ ...updateInputDto }));
+    const updatedReview = this.travelReviewRepository.merge(travelReview, updateInputDto);
+    await this.travelReviewRepository.save(this.travelReviewRepository.create({ ...updatedReview }));
   }
 
   async getReviewInfo(id: number): Promise<TravelReview> {
